@@ -5,6 +5,14 @@ A self-hosted REST API that reproduces the **Azure Status** page experience —
 **subscription-independent** JSON contract that your organization owns and operates
 inside its own Azure tenant.
 
+![Cloud Status Aggregator dashboard, tenant view](docs/images/dashboard-tenant-view.png)
+
+*The tenant view, running in mock mode with sample data. It layers the public
+Azure Status feed (top) with Service Health events scoped to your subscriptions
+and live per-resource availability from Resource Health — the two things the
+public status page cannot show you. The callout at the top flags a Service
+Health event that appears in **none** of the public feed.*
+
 ## Executive Summary
 
 The operator needs a programmatic equivalent of the public
