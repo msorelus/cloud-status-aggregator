@@ -1,0 +1,30 @@
+flowchart LR
+  subgraph Feeds[Vendor feeds]
+    RSS[icon:builtin:internet Azure Status RSS]
+    EMG[icon:builtin:cloud Emerging Issues API]
+    SVC[icon:builtin:server Service Health]
+  end
+
+  subgraph Core[Aggregator]
+    NORM[Normalize and merge]
+  end
+
+  subgraph Faces[Ways to consume]
+    API[REST API and status view]
+    MCP[MCP tools for agents]
+    WATCH[Change watcher]
+  end
+
+  subgraph Yours[Your systems]
+    SINK[icon:builtin:database Ticketing and dashboards]
+  end
+
+  RSS --> NORM
+  EMG --> NORM
+  SVC --> NORM
+  NORM --> API
+  NORM --> MCP
+  NORM --> WATCH
+  API --> SINK
+  MCP --> SINK
+  WATCH --> SINK

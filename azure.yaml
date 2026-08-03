@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: cloud-status-aggregator
+metadata:
+  template: cloud-status-aggregator@1.0.0
+
+infra:
+  provider: bicep
+  path: infra
+  module: main
+
+services:
+  api:
+    project: .
+    language: ts
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: .
+      # Built inside Azure Container Registry, so no local Docker daemon is
+      # needed. Set this to false if you would rather build locally.
+      remoteBuild: true
+
+hooks:
+  postprovision:
+    posix:
+      shell: sh
+      continueOnError: true
+      interactive: false
+      run: |
+        echo ""
+        echo "Provisioned. Once 'azd deploy' finishes, check:"
+        echo "  $SERVICE_API_URI/healthz"
+        echo "  $SERVICE_API_URI/api/status/view"
+        echo "  $SERVICE_API_URI/api/status/changes"
+        echo "  $SERVICE_API_URI/mcp   (Streamable HTTP MCP endpoint)"
+        echo ""
+    windows:
+      shell: pwsh
+      continueOnError: true
+      interactive: false
+      run: |
+        Write-Host ""
+        Write-Host "Provisioned. Once 'azd deploy' finishes, check:"
+        Write-Host "  $env:SERVICE_API_URI/healthz"
+        Write-Host "  $env:SERVICE_API_URI/api/status/view"
+        Write-Host "  $env:SERVICE_API_URI/api/status/changes"
+        Write-Host "  $env:SERVICE_API_URI/mcp   (Streamable HTTP MCP endpoint)"
+        Write-Host ""

@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "cloud-status-aggregator": {
+      "type": "http",
+      "url": "https://<your-app>.azurecontainerapps.io/mcp",
+
+      // Entra ID does not implement Dynamic Client Registration, so the client
+      // ID cannot be discovered — name the public client app registration here.
+      // Omit this whole block if the deployment runs with MCP_AUTH_ENABLED=false.
+      //
+      // If the log shows "Connection state: Error 401" straight after a
+      // SUCCESSFUL metadata discovery and no sign-in window ever opens, the
+      // problem is on the server, not here: the MCP endpoint URL must be
+      // registered as an Application ID URI on the API app registration.
+      // See "Connect an editor" in handoff/index.html.
+      "oauth": {
+        "clientId": "<public-client-app-registration-id>"
+      }
+    }
+  }
+}

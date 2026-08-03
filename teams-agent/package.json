@@ -1,0 +1,26 @@
+{
+  "name": "teams-status-agent",
+  "version": "0.1.0",
+  "description": "Custom-engine Teams agent seam for Cloud Status Aggregator",
+  "type": "module",
+  "main": "dist/src/server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node --env-file-if-exists=.env dist/src/server.js",
+    "ask": "node dist/scripts/ask.js",
+    "package": "node scripts/build-appPackage.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@microsoft/agents-hosting": "^1.6.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,29 @@
+# Dependencies are installed inside the image, never copied in.
+node_modules
+**/node_modules
+
+# Build output is produced inside the image.
+dist
+**/dist
+
+# Not part of the API service.
+teams-agent
+brief
+emails
+docs
+handoff
+test
+scripts
+
+# Local tooling and state.
+.git
+.github
+.azure
+.vscode
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+**/.DS_Store
+*.png

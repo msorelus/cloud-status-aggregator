@@ -1,0 +1,63 @@
+{
+  "emergingIssues": {
+    "value": [
+      {
+        "id": "/providers/Microsoft.ResourceHealth/emergingissues/default",
+        "type": "/providers/Microsoft.ResourceHealth/emergingissues",
+        "name": "default",
+        "properties": {
+          "refreshTimestamp": "2026-06-02T12:55:00Z",
+          "statusActiveEvents": [
+            {
+              "title": "Azure Front Door - Intermittent connectivity errors",
+              "description": "<p>Customers may experience intermittent connectivity failures when accessing services behind Azure Front Door. Engineers have identified a faulty configuration and are deploying a fix.</p>",
+              "trackingId": "VL12-3B8",
+              "startTime": "2026-06-02T11:20:00Z",
+              "cloud": "Public",
+              "severity": "Warning",
+              "stage": "Active",
+              "published": true,
+              "lastModifiedTime": "2026-06-02T12:50:00Z",
+              "impacts": [
+                {
+                  "id": "AFD",
+                  "name": "Azure Front Door",
+                  "regions": [
+                    { "id": "global", "name": "Global" }
+                  ]
+                }
+              ]
+            }
+          ],
+          "statusBanners": [
+            {
+              "title": "Service management operations delayed - West Europe",
+              "message": "<p>A subset of customers in West Europe may see delays in service management operations. Data plane is unaffected.</p>",
+              "cloud": "Public",
+              "lastModifiedTime": "2026-06-02T12:40:00Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "serviceHealth": {
+    "data": [
+      {
+        "eventType": "PlannedMaintenance",
+        "status": "Active",
+        "title": "Planned maintenance - SQL Database (East US 2)",
+        "trackingId": "PMNT-9921",
+        "summary": "Routine platform maintenance for Azure SQL Database. Brief failovers may occur.",
+        "impactStartTime": "2026-06-07T06:00:00Z",
+        "lastUpdateTime": "2026-06-01T09:00:00Z",
+        "impact": [
+          {
+            "ImpactedService": "SQL Database",
+            "ImpactedRegions": [{ "RegionName": "East US 2" }]
+          }
+        ]
+      }
+    ]
+  }
+}

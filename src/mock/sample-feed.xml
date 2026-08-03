@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:a10="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Azure Status</title>
+    <link>https://azure.status.microsoft/en-us/status/</link>
+    <description>Azure Status</description>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 02 Jun 2026 13:00:00 Z</lastBuildDate>
+    <item>
+      <title>Planned maintenance - Virtual Machines (North Europe)</title>
+      <description>Scheduled platform maintenance will reboot a subset of Virtual Machines in North Europe. Customers were notified via Service Health.</description>
+      <category>Planned Maintenance</category>
+      <link>https://azure.status.microsoft/status</link>
+      <pubDate>Sun, 07 Jun 2026 02:00:00 Z</pubDate>
+    </item>
+    <item>
+      <title>Storage - Latency in Southeast Asia region</title>
+      <description>Some customers may experience elevated latency for Storage operations in the Southeast Asia region. Investigating.</description>
+      <category>Storage</category>
+      <link>https://azure.status.microsoft/status</link>
+      <pubDate>Tue, 02 Jun 2026 12:30:00 Z</pubDate>
+    </item>
+    <item>
+      <title>Azure Front Door - Intermittent connectivity errors</title>
+      <description>Customers may experience intermittent connectivity failures behind Azure Front Door. A fix is being deployed.</description>
+      <category>Networking</category>
+      <link>https://azure.status.microsoft/status</link>
+      <pubDate>Tue, 02 Jun 2026 11:20:00 Z</pubDate>
+    </item>
+  </channel>
+</rss>

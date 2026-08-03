@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cloud Status Aggregator &mdash; Deployment &amp; Integration Guide</title>
+<style>
+  :root{
+    --bg:#0a0c11; --panel:#131722; --panel2:#1a1f2e; --line:#252c3d;
+    --ink:#e9ecf1; --muted:#8f98a8; --dim:#6b7383;
+    --blue:#2f9bff; --blue-d:#0078d4;
+    --green:#4ec26b; --amber:#ffb900; --red:#ff4d5e; --violet:#a78bfa;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    background-image:radial-gradient(900px 500px at 12% -8%,rgba(47,155,255,.10),transparent 60%),
+                     radial-gradient(700px 460px at 92% 4%,rgba(167,139,250,.08),transparent 60%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font:15px/1.65 "Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    min-height:100vh;
+  }
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,kbd,pre{font-family:"Cascadia Code",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  code{background:#1c2333;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.88em;color:#bcd7ff}
+
+  header{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    padding:15px 26px;border-bottom:1px solid var(--line);
+    background:rgba(10,12,17,.88);backdrop-filter:blur(10px);
+    position:sticky;top:0;z-index:50;
+  }
+  .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:.2px}
+  .sq{display:grid;grid-template-columns:9px 9px;grid-gap:2px}
+  .sq i{width:9px;height:9px;display:block}
+  .sq i:nth-child(1){background:#f25022}.sq i:nth-child(2){background:#7fba00}
+  .sq i:nth-child(3){background:#00a4ef}.sq i:nth-child(4){background:#ffb900}
+  header .meta{color:var(--muted);font-size:12.5px}
+  header .spacer{flex:1}
+  .pill{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+    padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .pill.ok{color:var(--green);border-color:rgba(78,194,107,.4);background:rgba(78,194,107,.08)}
+
+  .wrap{display:grid;grid-template-columns:250px 1fr;gap:30px;max-width:1400px;margin:0 auto;padding:26px 26px 90px}
+  @media(max-width:1000px){.wrap{grid-template-columns:1fr}nav.toc{position:static!important;max-height:none!important}}
+
+  nav.toc{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 100px);overflow:auto;
+    font-size:13.5px;border-right:1px solid var(--line);padding-right:18px}
+  nav.toc .grp{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+    font-weight:700;margin:18px 0 8px}
+  nav.toc a{display:block;color:var(--muted);padding:5px 10px;border-radius:7px;border-left:2px solid transparent}
+  nav.toc a:hover{color:var(--ink);background:var(--panel);text-decoration:none}
+  nav.toc a.active{color:var(--blue);border-left-color:var(--blue);background:rgba(47,155,255,.07)}
+
+  main{min-width:0}
+  section{scroll-margin-top:86px;margin-bottom:44px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px}
+  .kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:10px}
+  h1{font-size:30px;line-height:1.2;margin:0 0 14px;letter-spacing:-.4px}
+  h2{font-size:21px;margin:0 0 16px;letter-spacing:-.2px;display:flex;align-items:center;gap:11px}
+  h2 .num{flex:none;width:27px;height:27px;border-radius:8px;background:var(--blue-d);color:#fff;
+    display:grid;place-items:center;font-size:13px;font-weight:700}
+  h3{font-size:15px;margin:26px 0 10px;color:var(--ink)}
+  h4{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:22px 0 9px;font-weight:700}
+  p{margin:0 0 13px}
+  .lede{font-size:16.5px;color:#c8d0dc;line-height:1.7}
+  ul,ol{margin:0 0 13px;padding-left:22px}
+  li{margin-bottom:7px}
+  .muted{color:var(--muted)}
+  .small{font-size:13.5px}
+
+  pre{background:#0d1119;border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+    overflow:auto;font-size:13px;line-height:1.6;margin:0 0 14px;position:relative}
+  pre .c{color:var(--dim)}
+  pre .k{color:#7fb8ff}
+  pre .s{color:#9fe0a8}
+  pre .v{color:#ffd479}
+  .codewrap{position:relative;margin-bottom:14px}
+  .codewrap pre{margin:0}
+  .copy{position:absolute;top:9px;right:9px;background:#1c2333;border:1px solid var(--line);
+    color:var(--muted);border-radius:7px;padding:4px 10px;font-size:11.5px;cursor:pointer;
+    font-family:"Segoe UI",sans-serif;opacity:0;transition:.15s}
+  .codewrap:hover .copy{opacity:1}
+  .copy:hover{border-color:var(--blue);color:var(--ink)}
+  .copy.done{color:var(--green);border-color:rgba(78,194,107,.5)}
+
+  .note{border-left:3px solid var(--blue);background:linear-gradient(90deg,rgba(47,155,255,.09),transparent 88%);
+    padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px}
+  .note.warn{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,185,0,.09),transparent 88%)}
+  .note.stop{border-left-color:var(--red);background:linear-gradient(90deg,rgba(255,77,94,.09),transparent 88%)}
+  .note.good{border-left-color:var(--green);background:linear-gradient(90deg,rgba(78,194,107,.09),transparent 88%)}
+  .note .lbl{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:6px;color:var(--blue)}
+  .note.warn .lbl{color:var(--amber)}.note.stop .lbl{color:var(--red)}.note.good .lbl{color:var(--green)}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:0 0 16px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;
+    background:var(--panel2)}
+  th:first-child{border-top-left-radius:8px}th:last-child{border-top-right-radius:8px}
+  tbody tr:hover{background:rgba(47,155,255,.04)}
+  td code{white-space:nowrap}
+
+  .figure{margin:0 0 16px;background:#0d1119;border:1px solid var(--line);border-radius:10px;
+    padding:18px 18px 6px;overflow:hidden}
+  .figure svg{max-width:100%}
+  .figure figcaption{color:var(--muted);font-size:12.5px;line-height:1.6;padding:14px 4px 10px;
+    border-top:1px solid var(--line);margin-top:16px}
+  @media(max-width:700px){.figure{padding:12px 12px 4px;overflow-x:auto}
+    .figure svg{min-width:560px}}
+  .ascii{background:#0d1119;border:1px solid var(--line);border-radius:10px;padding:20px;
+    overflow:auto;font-size:12.5px;line-height:1.5;color:#9fb4d0;margin:0 0 16px;white-space:pre}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:860px){.grid2{grid-template-columns:1fr}}
+  .tile{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:17px 19px}
+  .tile .t{font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+  .tile .t .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .dot.g{background:var(--green)}.dot.a{background:var(--amber)}.dot.r{background:var(--red)}.dot.b{background:var(--blue)}
+  .tile p{margin:0;font-size:13.5px;color:var(--muted)}
+
+  .steps{counter-reset:s;list-style:none;padding:0}
+  .steps>li{counter-increment:s;position:relative;padding-left:38px;margin-bottom:22px}
+  .steps>li::before{content:counter(s);position:absolute;left:0;top:1px;width:25px;height:25px;
+    border-radius:7px;background:var(--panel2);border:1px solid var(--line);color:var(--blue);
+    display:grid;place-items:center;font-size:12.5px;font-weight:700}
+  .steps>li>b{display:block;margin-bottom:7px;font-size:15px}
+
+  .tabs{display:flex;gap:6px;margin-bottom:-1px;flex-wrap:wrap}
+  .tab{background:var(--panel2);border:1px solid var(--line);border-bottom-color:transparent;
+    color:var(--muted);padding:8px 15px;border-radius:9px 9px 0 0;cursor:pointer;font:inherit;font-size:13px}
+  .tab.on{background:#0d1119;color:var(--ink);border-color:var(--line)}
+  .tabbody{border:1px solid var(--line);border-radius:0 10px 10px 10px;overflow:hidden}
+  .tabbody pre{border:0;border-radius:0;margin:0}
+  .tabpane{display:none}.tabpane.on{display:block}
+
+  footer{border-top:1px solid var(--line);padding:26px;text-align:center;color:var(--dim);font-size:13px}
+  .cite{font-size:12.5px;color:var(--dim)}
+  .cite a{color:#6ea8e8}
+  .top{position:fixed;bottom:22px;right:22px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--muted);width:40px;height:40px;border-radius:10px;cursor:pointer;font-size:16px;z-index:40}
+  .top:hover{border-color:var(--blue);color:var(--ink)}
+  @media print{
+    body{background:#fff;color:#000}nav.toc,.top,.copy,header{display:none}
+    .card{border-color:#ccc;background:#fff}.wrap{grid-template-columns:1fr;padding:0}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="sq"><i></i><i></i><i></i><i></i></span>
+    <span>Microsoft</span>
+  </div>
+  <span class="meta">Cloud Status Aggregator &middot; Deployment &amp; Integration Guide</span>
+  <span class="spacer"></span>
+  <span class="pill ok">POC &rarr; Pilot</span>
+</header>
+
+<div class="wrap">
+
+<nav class="toc" id="toc">
+  <div class="grp">Start here</div>
+  <a href="#what">What this is</a>
+  <a href="#honest">What it does not do</a>
+  <a href="#arch">Architecture</a>
+  <div class="grp">Deploy</div>
+  <a href="#prereq">Prerequisites</a>
+  <a href="#quick">Quick deploy</a>
+  <a href="#manual">Step by step</a>
+  <a href="#config">Configuration</a>
+  <div class="grp">Integrate</div>
+  <a href="#webhook">Webhook contract</a>
+  <a href="#verify-sig">Verifying signatures</a>
+  <a href="#api">API reference</a>
+  <a href="#mcp">MCP tools</a>
+  <a href="#mcp-connect">Connect an editor</a>
+  <div class="grp">Operate</div>
+  <a href="#verify">Verify the deployment</a>
+  <a href="#harden">Production hardening</a>
+  <a href="#trouble">Troubleshooting</a>
+  <a href="#refs">References</a>
+</nav>
+
+<main>
+
+<section id="what">
+  <div class="card">
+    <div class="kicker">Overview</div>
+    <h1>Multi-vendor cloud status aggregation, starting with Microsoft Azure</h1>
+    <p class="lede">
+      This service turns cloud provider health signals into one normalized,
+      queryable feed &mdash; and turns a pull-only public feed into a push
+      notification your platform can subscribe to. Microsoft Azure is the first
+      vendor implemented. The data model, the change watcher and the webhook
+      contract are vendor-neutral by design, so a second or third provider
+      plugs in behind the same interfaces.
+    </p>
+
+    <h4>What it gives you</h4>
+    <div class="grid2">
+      <div class="tile">
+        <div class="t"><span class="dot b"></span>One normalized incident model</div>
+        <p>Three Microsoft sources reconciled into a single shape: global incidents, regional incidents, and planned maintenance &mdash; each with a tracking ID, status, impacted services and regions.</p>
+      </div>
+      <div class="tile">
+        <div class="t"><span class="dot b"></span>Change detection</div>
+        <p>The watcher polls on an interval, diffs against the last-seen snapshot, and emits only what actually moved: <code>new</code>, <code>updated</code>, <code>resolved</code>.</p>
+      </div>
+      <div class="tile">
+        <div class="t"><span class="dot b"></span>Signed webhook push</div>
+        <p>Deltas are POSTed to your endpoint with an HMAC-SHA256 signature. Microsoft publishes no push mechanism for the public status feed, so this layer supplies it.</p>
+      </div>
+      <div class="tile">
+        <div class="t"><span class="dot b"></span>Agent-ready via MCP</div>
+        <p>The same data is exposed as Model Context Protocol tools, so a Copilot or Teams agent can answer &ldquo;is Front Door degraded right now?&rdquo; without bespoke glue.</p>
+      </div>
+    </div>
+
+    <h4>The signal that matters for a distributor</h4>
+    <p>
+      Microsoft publishes to the <b>public</b> Azure Status page only in three
+      situations: broad impact across multiple services or regions, an issue
+      that blocks access to the portal or Service Health itself, and broad
+      impact where affected customers have not yet been identified.
+      Everything narrower goes to the tenant-scoped Service Health blade
+      instead.
+      <span class="cite">(<a href="https://learn.microsoft.com/azure/service-health/azure-status-overview" target="_blank" rel="noopener">Microsoft Learn &mdash; Azure Status overview</a>)</span>
+    </p>
+    <div class="note good">
+      <span class="lbl">Why that is the good news</span>
+      That publishing threshold is almost exactly the profile of an event that
+      floods a support desk with tickets. The public feed is narrow, but it is
+      narrow in your favour &mdash; it fires on the broad, multi-tenant events
+      that generate call volume, and it does so without needing access to any
+      customer's subscription.
+    </div>
+  </div>
+</section>
+
+<section id="honest">
+  <div class="card">
+    <div class="kicker">Read this before you demo it</div>
+    <h2><span class="num">!</span>What this does not do</h2>
+    <p>
+      The single most important design rule in this codebase: <b>nothing is
+      synthesized.</b> If a source publishes nothing, the service reports
+      &ldquo;nothing published&rdquo; &mdash; never &ldquo;verified
+      healthy.&rdquo; Absence of an incident is not evidence of health, and the
+      API will not pretend otherwise.
+    </p>
+    <table>
+      <thead><tr><th>It does not</th><th>Because</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Confirm a service is healthy</td>
+          <td>The public feed only reports problems. Silence means &ldquo;no broad incident published,&rdquo; which is a different claim.</td>
+        </tr>
+        <tr>
+          <td>See tenant-specific incidents without access</td>
+          <td>Narrow-impact events land in the customer's own Service Health blade. Reaching them requires delegated access to that tenant.</td>
+        </tr>
+        <tr>
+          <td>Predict or detect outages independently</td>
+          <td>It is an aggregator, not a monitor. It reports what vendors publish; it runs no synthetic probes.</td>
+        </tr>
+        <tr>
+          <td>Replace Service Health alerts inside a subscription</td>
+          <td>For a subscription you own, native Service Health alerts are richer and lower-latency. This fills the gap <i>outside</i> those boundaries.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note stop">
+      <span class="lbl">Never say this</span>
+      &ldquo;Azure Front Door is healthy in East US 2.&rdquo; The correct
+      statement is &ldquo;no incident affecting Azure Front Door in East US 2
+      has been published.&rdquo; The API responses are worded this way on
+      purpose; keep that wording when you surface them in your own UI.
+    </div>
+  </div>
+</section>
+
+<section id="arch">
+  <div class="card">
+    <div class="kicker">How it fits together</div>
+    <h2><span class="num">&#9634;</span>Architecture</h2>
+<figure class="figure">
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data flow from vendor feeds through the aggregator to your systems" style="width:100%;height:auto;display:block" viewBox="0 0 1114.40 486.00">
+  <defs>
+    <marker id="df-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8f98a8"/>
+    </marker>
+    <marker id="df-arrowhead-open" markerWidth="12" markerHeight="9" refX="11" refY="4.50" orient="auto">
+      <polygon points="0 0, 12 4.50, 0 9" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+    <marker id="df-arrowhead-filled-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#8f98a8"/>
+    </marker>
+    <marker id="df-arrowhead-open-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+  </defs>
+  <rect width="1114.40" height="486.00" fill="#0d1119" rx="10.00" ry="10.00"/>
+  <defs>
+    <linearGradient id="df-group-0-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="277.60" y="26.00" width="223.60" height="100.00" rx="10.00" ry="10.00" fill="url(#df-group-0-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="287.60" y="36.00" width="86.88" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="296.60" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Aggregator</text>
+  <defs>
+    <linearGradient id="df-group-1-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="529.20" y="26.00" width="265.60" height="272.00" rx="10.00" ry="10.00" fill="url(#df-group-1-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="539.20" y="36.00" width="121.32" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="548.20" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Ways to consume</text>
+  <defs>
+    <linearGradient id="df-group-2-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="26.00" y="26.00" width="223.60" height="434.00" rx="10.00" ry="10.00" fill="url(#df-group-2-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="36.00" y="36.00" width="100.66" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="45.00" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Vendor feeds</text>
+  <defs>
+    <linearGradient id="df-group-3-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="822.80" y="26.00" width="265.60" height="154.00" rx="10.00" ry="10.00" fill="url(#df-group-3-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="832.80" y="36.00" width="100.66" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="841.80" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Your systems</text>
+  <path d="M 208.40,254.00 C 283.39,254.00 259.52,153.80 293.60,87.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 233.60,114.00 C 259.92,114.00 269.60,97.80 293.60,87.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 116.80,344.00 C 116.80,200.30 280.36,203.60 389.40,110.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 485.20,87.00 C 509.20,87.00 521.20,87.00 545.20,87.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 485.20,87.00 C 527.14,87.00 521.20,138.60 545.20,173.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 485.20,87.00 C 558.07,87.00 521.20,190.20 545.20,259.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 778.80,87.00 C 805.12,87.00 814.80,103.20 838.80,114.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 745.20,173.00 C 789.46,173.00 801.36,137.60 838.80,114.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 694.80,259.00 C 776.54,259.00 781.20,172.00 838.80,114.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <g transform="translate(42.00,204.00)">
+    <defs>
+      <linearGradient id="df-node-0-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A3141"/>
+        <stop offset="58%" stop-color="#1a2233"/>
+        <stop offset="100%" stop-color="#182030"/>
+      </linearGradient>
+    </defs>
+    <rect width="166.40" height="100.00" rx="0" ry="0" fill="url(#df-node-0-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <g transform="translate(59.20,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><ellipse cx="12" cy="12" rx="4" ry="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M4.93 5h14.14M4.93 19h14.14" /></g>
+      </svg>
+    </g>
+    <text x="83.20" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Azure Status RSS</text>
+  </g>
+  <g transform="translate(42.00,64.00)">
+    <defs>
+      <linearGradient id="df-node-1-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#283444"/>
+        <stop offset="58%" stop-color="#182536"/>
+        <stop offset="100%" stop-color="#162333"/>
+      </linearGradient>
+    </defs>
+    <rect width="191.60" height="100.00" rx="0" ry="0" fill="url(#df-node-1-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <g transform="translate(71.80,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <path d="M18.74 10.04A6.87 6.87 0 0 0 12 4C9.34 4 7.05 5.64 5.9 8.04A5.5 5.5 0 0 0 1 14c0 3.31 2.47 6 5.5 6h11.93c2.53 0 4.58-2.24 4.58-5 0-2.64-1.88-4.78-4.27-4.96z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+      </svg>
+    </g>
+    <text x="95.80" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Emerging Issues API</text>
+  </g>
+  <g transform="translate(42.00,344.00)">
+    <defs>
+      <linearGradient id="df-node-2-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2B303E"/>
+        <stop offset="58%" stop-color="#1b2130"/>
+        <stop offset="100%" stop-color="#191F2D"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="100.00" rx="0" ry="0" fill="url(#df-node-2-fill-gradient)" stroke="#38bdf8" stroke-width="1.50"/>
+    <g transform="translate(50.80,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2" /><rect x="2" y="14" width="20" height="8" rx="2" ry="2" /><circle cx="6" cy="6" r="1" fill="currentColor" /><circle cx="6" cy="18" r="1" fill="currentColor" /></g>
+      </svg>
+    </g>
+    <text x="74.80" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Service Health</text>
+  </g>
+  <g transform="translate(293.60,64.00)">
+    <defs>
+      <linearGradient id="df-node-3-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2E3346"/>
+        <stop offset="58%" stop-color="#1e2438"/>
+        <stop offset="100%" stop-color="#1C2235"/>
+      </linearGradient>
+    </defs>
+    <rect width="191.60" height="46.00" rx="0" ry="0" fill="url(#df-node-3-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <text x="95.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Normalize and merge</text>
+  </g>
+  <g transform="translate(545.20,64.00)">
+    <defs>
+      <linearGradient id="df-node-4-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#302D41"/>
+        <stop offset="58%" stop-color="#201d33"/>
+        <stop offset="100%" stop-color="#1E1B30"/>
+      </linearGradient>
+    </defs>
+    <rect width="233.60" height="46.00" rx="0" ry="0" fill="url(#df-node-4-fill-gradient)" stroke="#6c8cc7" stroke-width="1.50"/>
+    <text x="116.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">REST API and status view</text>
+  </g>
+  <g transform="translate(545.20,150.00)">
+    <defs>
+      <linearGradient id="df-node-5-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#25343E"/>
+        <stop offset="58%" stop-color="#152530"/>
+        <stop offset="100%" stop-color="#13232D"/>
+      </linearGradient>
+    </defs>
+    <rect width="200.00" height="46.00" rx="0" ry="0" fill="url(#df-node-5-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="100.00" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">MCP tools for agents</text>
+  </g>
+  <g transform="translate(545.20,236.00)">
+    <defs>
+      <linearGradient id="df-node-6-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A2F3D"/>
+        <stop offset="58%" stop-color="#1a1f2e"/>
+        <stop offset="100%" stop-color="#181D2B"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="46.00" rx="0" ry="0" fill="url(#df-node-6-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <text x="74.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Change watcher</text>
+  </g>
+  <g transform="translate(838.80,64.00)">
+    <defs>
+      <linearGradient id="df-node-7-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#273439"/>
+        <stop offset="58%" stop-color="#17252a"/>
+        <stop offset="100%" stop-color="#152327"/>
+      </linearGradient>
+    </defs>
+    <rect width="233.60" height="100.00" rx="0" ry="0" fill="url(#df-node-7-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <g transform="translate(92.80,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5.5" rx="8" ry="3.5" /><path d="M4 5.5v13c0 1.93 3.58 3.5 8 3.5s8-1.57 8-3.5v-13" /><path d="M4 12c0 1.93 3.58 3.5 8 3.5s8-1.57 8-3.5" /></g>
+      </svg>
+    </g>
+    <text x="116.80" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Ticketing and dashboards</text>
+  </g>
+</svg>
+<figcaption>Every feed is normalized into one issue model. A second vendor plugs in on the left and rides the same path &mdash; the webhook payload already carries a <code>vendor</code> field so subscribers can fan out per provider on day one.</figcaption>
+</figure>
+
+    <h3>Deployed shape in Azure</h3>
+<figure class="figure">
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Azure resources created by the deployment" style="width:100%;height:auto;display:block" viewBox="0 0 1222.40 294.10">
+  <defs>
+    <marker id="dp-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8f98a8"/>
+    </marker>
+    <marker id="dp-arrowhead-open" markerWidth="12" markerHeight="9" refX="11" refY="4.50" orient="auto">
+      <polygon points="0 0, 12 4.50, 0 9" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+    <marker id="dp-arrowhead-filled-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#8f98a8"/>
+    </marker>
+    <marker id="dp-arrowhead-open-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+  </defs>
+  <rect width="1222.40" height="294.10" fill="#0d1119" rx="10.00" ry="10.00"/>
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 1 605.20,94.00 L 144.60,94.00 A 6.00,6.00 0 0 0 138.60,100.00 L 138.60,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 1 605.20,94.00 L 493.80,94.00 A 6.00,6.00 0 0 0 487.80,100.00 L 487.80,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 487.80,162.00 L 487.80,178.00 A 6.00,6.00 0 0 1 481.80,184.00 L 370.40,184.00 A 6.00,6.00 0 0 0 364.40,190.00 L 364.40,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 487.80,162.00 L 487.80,178.00 A 6.00,6.00 0 0 0 493.80,184.00 L 580.00,184.00 A 6.00,6.00 0 0 1 586.00,190.00 L 586.00,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 0 617.20,94.00 L 826.80,94.00 A 6.00,6.00 0 0 1 832.80,100.00 L 832.80,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 832.80,162.00 L 832.80,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 0 617.20,94.00 L 1077.80,94.00 A 6.00,6.00 0 0 1 1083.80,100.00 L 1083.80,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 1083.80,178.10 L 1083.80,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <g transform="translate(536.40,26.00)">
+    <defs>
+      <linearGradient id="dp-node-0-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A3141"/>
+        <stop offset="58%" stop-color="#1a2233"/>
+        <stop offset="100%" stop-color="#182030"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-0-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="74.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Resource group</text>
+  </g>
+  <g transform="translate(26.00,116.00)">
+    <defs>
+      <linearGradient id="dp-node-1-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#283444"/>
+        <stop offset="58%" stop-color="#182536"/>
+        <stop offset="100%" stop-color="#162333"/>
+      </linearGradient>
+    </defs>
+    <rect width="225.20" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-1-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <text x="112.60" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Log Analytics workspace</text>
+  </g>
+  <g transform="translate(404.60,116.00)">
+    <defs>
+      <linearGradient id="dp-node-2-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2B303E"/>
+        <stop offset="58%" stop-color="#1b2130"/>
+        <stop offset="100%" stop-color="#191F2D"/>
+      </linearGradient>
+    </defs>
+    <rect width="166.40" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-2-fill-gradient)" stroke="#38bdf8" stroke-width="1.50"/>
+    <text x="83.20" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Managed identity</text>
+  </g>
+  <g transform="translate(281.20,206.00)">
+    <defs>
+      <linearGradient id="dp-node-3-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2E3346"/>
+        <stop offset="58%" stop-color="#1e2438"/>
+        <stop offset="100%" stop-color="#1C2235"/>
+      </linearGradient>
+    </defs>
+    <rect width="166.40" height="62.10" rx="10.00" ry="10.00" fill="url(#dp-node-3-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <text x="83.20" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">
+      <tspan x="83.20" y="27.90">Reader on health</tspan>
+      <tspan x="83.20" dy="16.10">providers</tspan>
+    </text>
+  </g>
+  <g transform="translate(477.60,206.00)">
+    <defs>
+      <linearGradient id="dp-node-4-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#302D41"/>
+        <stop offset="58%" stop-color="#201d33"/>
+        <stop offset="100%" stop-color="#1E1B30"/>
+      </linearGradient>
+    </defs>
+    <rect width="216.80" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-4-fill-gradient)" stroke="#6c8cc7" stroke-width="1.50"/>
+    <text x="108.40" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Key Vault Secrets User</text>
+  </g>
+  <g transform="translate(772.80,116.00)">
+    <defs>
+      <linearGradient id="dp-node-5-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#25343E"/>
+        <stop offset="58%" stop-color="#152530"/>
+        <stop offset="100%" stop-color="#13232D"/>
+      </linearGradient>
+    </defs>
+    <rect width="120.00" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-5-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="60.00" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Key Vault</text>
+  </g>
+  <g transform="translate(724.40,206.00)">
+    <defs>
+      <linearGradient id="dp-node-6-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A2F3D"/>
+        <stop offset="58%" stop-color="#1a1f2e"/>
+        <stop offset="100%" stop-color="#181D2B"/>
+      </linearGradient>
+    </defs>
+    <rect width="216.80" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-6-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <text x="108.40" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">webhook-signing-secret</text>
+  </g>
+  <g transform="translate(1009.00,116.00)">
+    <defs>
+      <linearGradient id="dp-node-7-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#273439"/>
+        <stop offset="58%" stop-color="#17252a"/>
+        <stop offset="100%" stop-color="#152327"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="62.10" rx="10.00" ry="10.00" fill="url(#dp-node-7-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <text x="74.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">
+      <tspan x="74.80" y="27.90">Container Apps</tspan>
+      <tspan x="74.80" dy="16.10">environment</tspan>
+    </text>
+  </g>
+  <g transform="translate(971.20,206.00)">
+    <defs>
+      <linearGradient id="dp-node-8-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A3141"/>
+        <stop offset="58%" stop-color="#1a2233"/>
+        <stop offset="100%" stop-color="#182030"/>
+      </linearGradient>
+    </defs>
+    <rect width="225.20" height="62.10" rx="10.00" ry="10.00" fill="url(#dp-node-8-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="112.60" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">
+      <tspan x="112.60" y="27.90">Container App - API and</tspan>
+      <tspan x="112.60" dy="16.10">watcher</tspan>
+    </text>
+  </g>
+</svg>
+<figcaption>Five resources in one resource group. The identity holds the only two role assignments the workload needs.</figcaption>
+</figure>
+    <div class="note">
+      <span class="lbl">No secrets in configuration</span>
+      The webhook signing key is stored in Key Vault &mdash; that is where you
+      read it back, rotate it, and audit access to it. It reaches the container
+      as a platform-managed Container Apps secret, and the
+      <code>WEBHOOK_SECRET</code> environment variable is a
+      <code>secretRef</code>, never a literal value. The key travels as a
+      <code>@secure()</code> template parameter, so it is not logged, not
+      readable from deployment history, and never appears in deployment output.
+    </div>
+  </div>
+</section>
+
+<section id="prereq">
+  <div class="card">
+    <div class="kicker">Before you start</div>
+    <h2><span class="num">1</span>Prerequisites</h2>
+    <table>
+      <thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td><b>Azure subscription</b></td><td>Any subscription you can deploy into. The aggregator does not need access to <i>customer</i> subscriptions to read the public sources.</td></tr>
+        <tr><td><b>Permissions</b></td><td><code>Contributor</code> plus <code>User Access Administrator</code> at <b>subscription</b> scope &mdash; the template creates its own resource group and makes role assignments. <code>Owner</code> also works.</td></tr>
+        <tr><td><b>Azure Developer CLI</b></td><td>1.9 or later &mdash; <code>azd</code> drives the whole deployment. <a href="https://aka.ms/azd-install">aka.ms/azd-install</a>. Everything also works with plain Azure CLI if <code>azd</code> cannot be installed.</td></tr>
+        <tr><td><b>Azure CLI</b></td><td>2.53 or later, with the Bicep extension. Run <code>az bicep install</code> once.</td></tr>
+        <tr><td><b>Resource providers</b></td><td><code>Microsoft.App</code>, <code>Microsoft.OperationalInsights</code>, <code>Microsoft.KeyVault</code>, <code>Microsoft.ContainerRegistry</code>, <code>Microsoft.ResourceHealth</code>.</td></tr>
+        <tr><td><b>Docker</b></td><td><i>Not required.</i> <code>azure.yaml</code> sets <code>remoteBuild: true</code>, so the image is built inside Azure Container Registry. No local daemon.</td></tr>
+        <tr><td><b>Outbound network</b></td><td>The container needs HTTPS egress to <code>azure.status.microsoft</code>, <code>management.azure.com</code>, <code>login.microsoftonline.com</code>, and your webhook endpoint.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Register providers and check your context</h4>
+    <div class="codewrap"><button class="copy">Copy</button><pre><span class="c"># Confirm which subscription you are about to deploy into</span>
+az account show --output table
+
+<span class="c"># One-time provider registration (safe to re-run)</span>
+for p in Microsoft.App Microsoft.OperationalInsights Microsoft.KeyVault \
+         Microsoft.ContainerRegistry Microsoft.ResourceHealth; do
+  az provider register --namespace "$p" --wait
+done
+
+<span class="c"># Bicep tooling</span>
+az bicep install || az bicep upgrade
+
+<span class="c"># Sign azd in to the same tenant</span>
+azd auth login</pre></div>
+  </div>
+</section>
+
+<section id="quick">
+  <div class="card">
+    <div class="kicker">The fast path</div>
+    <h2><span class="num">2</span>Quick deploy &mdash; <code>azd up</code></h2>
+    <p>
+      From the repository root. One command provisions the resource group,
+      container registry, managed identity, Key Vault, Container Apps
+      environment and the app, builds the image inside the registry, rolls it
+      out, and prints the URLs.
+    </p>
+    <div class="codewrap"><button class="copy">Copy</button><pre><span class="c"># Name the environment. This names the resource group (rg-&lt;name&gt;) and tags every resource.</span>
+azd env new cloud-status-dev --location eastus2
+
+<span class="c"># Generate a signing secret for the webhook (keep this &mdash; your subscriber needs it)</span>
+azd env set WEBHOOK_SECRET "$(openssl rand -hex 32)"
+
+<span class="c"># Where change notifications should be POSTed (optional; omit to start read-only)</span>
+azd env set WEBHOOK_URL "https://tickets.example.com/hooks/cloud-status"
+
+<span class="c"># Optional: subscriptions to also pull Service Health from</span>
+<span class="c"># azd env set SUBSCRIPTION_IDS "00000000-0000-0000-0000-000000000000"</span>
+
+azd up</pre></div>
+
+    <p class="small muted">
+      Roughly four to six minutes end to end, most of it the container build.
+      <code>azd up</code> is idempotent &mdash; re-run it to ship a new image
+      version, or use <code>azd deploy</code> to push code without touching
+      infrastructure.
+    </p>
+
+    <table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>azd provision --preview</code></td><td>What-if. Prints the resource changes and applies nothing.</td></tr>
+        <tr><td><code>azd deploy</code></td><td>Rebuild and roll out code only. Leaves infrastructure alone.</td></tr>
+        <tr><td><code>azd env get-values</code></td><td>Endpoint URL, resource group, registry &mdash; everything the deployment published.</td></tr>
+        <tr><td><code>azd monitor --logs</code></td><td>Stream container logs from Log Analytics.</td></tr>
+        <tr><td><code>azd down --purge</code></td><td>Delete the environment, Key Vault included. Irreversible.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <span class="lbl">Print the secret somewhere safe first</span>
+      <code>echo $WEBHOOK_SECRET</code> before you close the shell. The value
+      goes into Key Vault, and your webhook receiver needs the same string to
+      verify signatures. After deployment you can always read it back with
+      <code>az keyvault secret show --vault-name &lt;kv&gt; --name webhook-signing-secret --query value -o tsv</code>.
+    </div>
+
+    <h3>Expected output</h3>
+    <div class="codewrap"><button class="copy">Copy</button><pre>SUCCESS: Your up workflow to provision and deploy to Azure completed
+
+  Status view    https://ca-azstatus-dev-eus2-001.&lt;region&gt;.azurecontainerapps.io/api/status/view
+  Raw status     https://ca-azstatus-dev-eus2-001.&lt;region&gt;.azurecontainerapps.io/api/status
+  Recent changes https://ca-azstatus-dev-eus2-001.&lt;region&gt;.azurecontainerapps.io/api/status/changes
+  MCP endpoint   https://ca-azstatus-dev-eus2-001.&lt;region&gt;.azurecontainerapps.io/mcp
+  Health probe   https://ca-azstatus-dev-eus2-001.&lt;region&gt;.azurecontainerapps.io/healthz</pre></div>
+  </div>
+</section>
+
+<section id="manual">
+  <div class="card">
+    <div class="kicker">If you need to control each step</div>
+    <h2><span class="num">3</span>Step by step</h2>
+    <p>
+      <code>azd up</code> is three phases in a trench coat. Run them separately
+      when you want to review what will change, or when provisioning and
+      shipping code are done by different people.
+    </p>
+    <ol class="steps">
+      <li><b>Create the environment</b>
+        <p class="small muted">Settings live in <code>.azure/&lt;name&gt;/.env</code>. That directory is git-ignored &mdash; it holds the signing secret.</p>
+        <div class="codewrap"><button class="copy">Copy</button><pre>azd env new cloud-status-dev --location eastus2 --subscription &lt;subscription-id&gt;</pre></div>
+      </li>
+      <li><b>Set the configuration you want</b>
+        <div class="codewrap"><button class="copy">Copy</button><pre>azd env set WEBHOOK_SECRET "$(openssl rand -hex 32)"
+azd env set WEBHOOK_URL    "https://tickets.example.com/hooks/cloud-status"
+azd env set WATCH_INTERVAL_SECONDS 60
+
+<span class="c"># Optional: also read Service Health from these subscriptions</span>
+azd env set SUBSCRIPTION_IDS "00000000-0000-0000-0000-000000000000"
+
+<span class="c"># Governance tags</span>
+azd env set OWNER_TAG   "cloud-platform"
+azd env set COST_CENTER "CC-1234"</pre></div>
+      </li>
+      <li><b>Review what will change</b>
+        <p class="small muted">A what-if pass. Nothing is created.</p>
+        <div class="codewrap"><button class="copy">Copy</button><pre>azd provision --preview</pre></div>
+      </li>
+      <li><b>Provision the infrastructure</b>
+        <p class="small muted">The app comes up on a placeholder image; the next step replaces it.</p>
+        <div class="codewrap"><button class="copy">Copy</button><pre>azd provision</pre></div>
+      </li>
+      <li><b>Build and ship the image</b>
+        <p class="small muted">Built inside Azure Container Registry, so no local Docker daemon is involved.</p>
+        <div class="codewrap"><button class="copy">Copy</button><pre>azd deploy</pre></div>
+      </li>
+      <li><b>Open the status view</b>
+        <div class="codewrap"><button class="copy">Copy</button><pre>APP_URL=$(azd env get-value SERVICE_API_URI)
+
+open "$APP_URL/api/status/view"   <span class="c"># macOS; use xdg-open or start elsewhere</span></pre></div>
+      </li>
+    </ol>
+
+    <h3>Without Azure Developer CLI</h3>
+    <p>
+      Some tenants cannot install <code>azd</code>. <code>infra/deploy.sh</code>
+      drives the same Bicep templates with plain Azure CLI, in the same two
+      passes &mdash; provision, build, then roll out the real image.
+    </p>
+    <div class="codewrap"><button class="copy">Copy</button><pre>export WEBHOOK_SECRET="$(openssl rand -hex 32)"
+export WEBHOOK_URL="https://tickets.example.com/hooks/cloud-status"   <span class="c"># optional</span>
+
+./infra/deploy.sh cloud-status-dev eastus2</pre></div>
+
+    <p class="small muted">Or drive ARM directly. The template is subscription-scoped and creates its own resource group.</p>
+    <div class="codewrap"><button class="copy">Copy</button><pre><span class="c"># 1. Provision (the app starts on a placeholder image)</span>
+az deployment sub create \
+  --location eastus2 \
+  --template-file infra/main.bicep \
+  --parameters environmentName=cloud-status-dev location=eastus2 \
+               webhookUrl="https://tickets.example.com/hooks/cloud-status" \
+               webhookSecret="$WEBHOOK_SECRET"
+
+<span class="c"># 2. Read back the registry the template created</span>
+RG=$(az deployment sub show -n main --query properties.outputs.AZURE_RESOURCE_GROUP.value -o tsv)
+ACR=$(az deployment sub show -n main --query properties.outputs.AZURE_CONTAINER_REGISTRY_NAME.value -o tsv)
+LOGIN=$(az deployment sub show -n main --query properties.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT.value -o tsv)
+
+<span class="c"># 3. Build server-side with ACR Tasks</span>
+az acr build --registry "$ACR" --resource-group "$RG" \
+  --image cloud-status-aggregator:1.0.0 --file Dockerfile .
+
+<span class="c"># 4. Roll the real image out</span>
+az deployment sub create \
+  --location eastus2 \
+  --template-file infra/main.bicep \
+  --parameters environmentName=cloud-status-dev location=eastus2 \
+               apiExists=true \
+               containerImage="$LOGIN/cloud-status-aggregator:1.0.0" \
+               webhookUrl="https://tickets.example.com/hooks/cloud-status" \
+               webhookSecret="$WEBHOOK_SECRET"</pre></div>
+
+    <div class="note">
+      <span class="lbl">Why two passes</span>
+      The registry is created by the same template that runs the container, so
+      on a first deployment the image does not exist yet. The app starts on a
+      public placeholder, then the second pass swaps in your build.
+      <code>apiExists=true</code> tells the template to read the running image
+      back, so re-provisioning later never rolls your version backwards.
+    </div>
+  </div>
+</section>
+
+<section id="config">
+  <div class="card">
+    <div class="kicker">Knobs</div>
+    <h2><span class="num">4</span>Configuration reference</h2>
+
+    <h4>Environment settings &mdash; <code>azd env set &lt;key&gt; &lt;value&gt;</code></h4>
+    <p class="small muted"><code>infra/main.parameters.json</code> maps each key onto a template parameter. Passing the parameter directly to <code>az deployment sub create</code> works the same way.</p>
+    <table>
+      <thead><tr><th><code>azd env set</code> key</th><th>Template parameter</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr><td><code>SUBSCRIPTION_IDS</code></td><td><code>subscriptionIds</code></td><td>empty</td></tr>
+        <tr><td><code>WEBHOOK_URL</code></td><td><code>webhookUrl</code></td><td>empty</td></tr>
+        <tr><td><code>WEBHOOK_SECRET</code></td><td><code>webhookSecret</code></td><td>empty</td></tr>
+        <tr><td><code>WATCH_ENABLED</code></td><td><code>watchEnabled</code></td><td><code>true</code></td></tr>
+        <tr><td><code>WATCH_INTERVAL_SECONDS</code></td><td><code>watchIntervalSeconds</code></td><td><code>60</code></td></tr>
+        <tr><td><code>WORKLOAD_NAME</code></td><td><code>workload</code></td><td><code>azstatus</code></td></tr>
+        <tr><td><code>DEPLOY_TIER</code></td><td><code>environment</code></td><td><code>dev</code></td></tr>
+        <tr><td><code>REGION_SHORT</code> / <code>INSTANCE</code></td><td><code>regionShort</code> / <code>instance</code></td><td><code>eus2</code> / <code>001</code></td></tr>
+        <tr><td><code>OWNER_TAG</code> / <code>COST_CENTER</code></td><td><code>owner</code> / <code>costCenter</code></td><td><code>platform-team</code> / <code>TBD</code></td></tr>
+        <tr><td><code>MIN_REPLICAS</code> / <code>MAX_REPLICAS</code></td><td><code>minReplicas</code> / <code>maxReplicas</code></td><td><code>1</code> / <code>3</code></td></tr>
+        <tr><td><code>AZURE_RESOURCE_GROUP</code></td><td><code>resourceGroupName</code></td><td>empty &rarr; <code>rg-&lt;env-name&gt;</code></td></tr>
+      </tbody>
+    </table>
+
+    <h4>Template parameters &mdash; infra/main.bicep</h4>
+    <table>
+      <thead><tr><th>Parameter</th><th>Default</th><th>What it controls</th></tr></thead>
+      <tbody>
+        <tr><td><code>environmentName</code></td><td>&mdash;</td><td><b>Required.</b> Names the resource group and stamps the <code>azd-env-name</code> tag on everything. <code>azd</code> supplies it.</td></tr>
+        <tr><td><code>location</code></td><td>&mdash;</td><td><b>Required.</b> Azure region for every resource.</td></tr>
+        <tr><td><code>resourceGroupName</code></td><td>empty</td><td>Deploy into an existing group. Empty creates <code>rg-&lt;environmentName&gt;</code>.</td></tr>
+        <tr><td><code>containerImage</code></td><td>empty</td><td>Fully qualified image reference. Empty keeps the running image, or starts on a placeholder on a first deployment.</td></tr>
+        <tr><td><code>apiExists</code></td><td><code>false</code></td><td>Set true on a re-deploy so the running image is read back instead of reset. <code>azd</code> sets it automatically.</td></tr>
+        <tr><td><code>principalId</code></td><td>empty</td><td>Object ID of whoever is deploying. Granted <code>AcrPush</code> so the image can be pushed with an Entra identity instead of a registry admin password.</td></tr>
+        <tr><td><code>workload</code></td><td><code>azstatus</code></td><td>Short name used in every resource name.</td></tr>
+        <tr><td><code>environment</code></td><td><code>dev</code></td><td><code>dev</code> / <code>test</code> / <code>staging</code> / <code>prod</code>. Feeds the name and the <code>Environment</code> tag.</td></tr>
+        <tr><td><code>regionShort</code></td><td><code>eus2</code></td><td>Region abbreviation in resource names.</td></tr>
+        <tr><td><code>subscriptionIds</code></td><td>empty</td><td>Comma-separated. Adds subscription-scoped Service Health and Resource Health. Empty keeps it fully subscription-independent.</td></tr>
+        <tr><td><code>watchEnabled</code></td><td><code>true</code></td><td>Runs the poll/diff loop. Turn off for a pure read-only API.</td></tr>
+        <tr><td><code>watchIntervalSeconds</code></td><td><code>60</code></td><td>Poll cadence. Floor of 15 seconds.</td></tr>
+        <tr><td><code>webhookUrl</code></td><td>empty</td><td>Where deltas are POSTed. Empty still records changes at <code>/api/status/changes</code>.</td></tr>
+        <tr><td><code>webhookSecret</code></td><td>empty</td><td>Secure. HMAC-SHA256 key. Empty sends unsigned payloads &mdash; not advised.</td></tr>
+        <tr><td><code>keyVaultAdminObjectIds</code></td><td><code>[]</code></td><td>Entra object IDs that may also read the signing secret.</td></tr>
+        <tr><td><code>minReplicas</code> / <code>maxReplicas</code></td><td><code>1</code> / <code>3</code></td><td>See the warning below before raising the minimum.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note warn">
+      <span class="lbl">Keep minReplicas at 1</span>
+      The watcher holds its last-seen baseline in memory, so each replica diffs
+      independently. Running two replicas means every change is delivered
+      twice. Raise the minimum only after you move the baseline to shared state
+      (Redis or a table), or make your subscriber idempotent on
+      <code>change.id</code> + <code>change.kind</code>.
+    </div>
+
+    <h4>Container environment variables</h4>
+    <p class="small muted">Set by the template; listed here for local runs and for anyone reading the container config.</p>
+    <table>
+      <thead><tr><th>Variable</th><th>Default</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>PORT</code></td><td><code>8080</code></td><td>Listen port.</td></tr>
+        <tr><td><code>MOCK</code></td><td><code>false</code></td><td><code>true</code> serves bundled sample data &mdash; no auth, no network. Demo and offline mode.</td></tr>
+        <tr><td><code>AZURE_CLIENT_ID</code></td><td>set by template</td><td>Client ID of the user-assigned identity, consumed by <code>DefaultAzureCredential</code>.</td></tr>
+        <tr><td><code>SUBSCRIPTION_IDS</code></td><td>empty</td><td>Comma-separated subscription IDs for Service Health / Resource Health.</td></tr>
+        <tr><td><code>STATUS_FEED_URL</code></td><td>Azure Status RSS</td><td>Override for a different locale or a sovereign cloud.</td></tr>
+        <tr><td><code>ARM_BASE_URL</code> / <code>ARM_SCOPE</code></td><td>public cloud</td><td>Sovereign cloud overrides.</td></tr>
+        <tr><td><code>FETCH_TIMEOUT_MS</code></td><td><code>15000</code></td><td>Per-source network timeout.</td></tr>
+        <tr><td><code>WATCH_ENABLED</code></td><td>unset</td><td><code>true</code> starts the change watcher.</td></tr>
+        <tr><td><code>WATCH_INTERVAL_MS</code></td><td><code>60000</code></td><td>Poll interval; clamped to a 15000 floor.</td></tr>
+        <tr><td><code>WEBHOOK_URL</code></td><td>empty</td><td>Subscriber endpoint.</td></tr>
+        <tr><td><code>WEBHOOK_SECRET</code></td><td>empty</td><td>Signing key. Injected from Key Vault in the deployed template.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="webhook">
+  <div class="card">
+    <div class="kicker">The integration point</div>
+    <h2><span class="num">5</span>Webhook contract</h2>
+    <p>
+      When the watcher detects a change it POSTs a single JSON body to
+      <code>WEBHOOK_URL</code>. Only deltas are sent &mdash; a poll that finds
+      nothing new sends nothing at all.
+    </p>
+
+    <h4>Request headers</h4>
+    <table>
+      <thead><tr><th>Header</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>content-type</code></td><td><code>application/json</code></td></tr>
+        <tr><td><code>user-agent</code></td><td><code>cloud-status-aggregator/0.1</code></td></tr>
+        <tr><td><code>x-aggregator-signature</code></td><td><code>sha256=&lt;hex&gt;</code> &mdash; HMAC-SHA256 of the exact raw body, keyed with <code>WEBHOOK_SECRET</code>. Present only when a secret is configured.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Body</h4>
+    <div class="codewrap"><button class="copy">Copy</button><pre>{
+  <span class="k">"specVersion"</span>: <span class="s">"1.0"</span>,
+  <span class="k">"vendor"</span>: <span class="s">"microsoft-azure"</span>,
+  <span class="k">"source"</span>: <span class="s">"cloud-status-aggregator"</span>,
+  <span class="k">"generatedAt"</span>: <span class="s">"2026-08-03T14:22:07.881Z"</span>,
+  <span class="k">"previousPollAt"</span>: <span class="s">"2026-08-03T14:21:07.402Z"</span>,
+  <span class="k">"overall"</span>: <span class="s">"degraded"</span>,
+  <span class="k">"counts"</span>: { <span class="k">"new"</span>: <span class="v">1</span>, <span class="k">"updated"</span>: <span class="v">0</span>, <span class="k">"resolved"</span>: <span class="v">0</span> },
+  <span class="k">"changes"</span>: [
+    {
+      <span class="k">"kind"</span>: <span class="s">"new"</span>,
+      <span class="k">"issue"</span>: {
+        <span class="k">"id"</span>: <span class="s">"ei-active-cc39074a2fbb"</span>,
+        <span class="k">"trackingId"</span>: <span class="s">"VL12-3B8"</span>,
+        <span class="k">"title"</span>: <span class="s">"Azure Front Door - Connectivity issues"</span>,
+        <span class="k">"summary"</span>: <span class="s">"Customers may experience intermittent failures…"</span>,
+        <span class="k">"category"</span>: <span class="s">"global"</span>,
+        <span class="k">"status"</span>: <span class="s">"active"</span>,
+        <span class="k">"impactedServices"</span>: [<span class="s">"Azure Front Door"</span>],
+        <span class="k">"impactedRegions"</span>: [<span class="s">"Global"</span>],
+        <span class="k">"startTime"</span>: <span class="s">"2026-08-03T14:05:00Z"</span>,
+        <span class="k">"lastUpdateTime"</span>: <span class="s">"2026-08-03T14:20:00Z"</span>,
+        <span class="k">"source"</span>: <span class="s">"emergingIssues"</span>,
+        <span class="k">"link"</span>: <span class="s">"https://azure.status.microsoft/status"</span>
+      }
+    }
+  ]
+}</pre></div>
+
+    <h4>Change kinds</h4>
+    <table>
+      <thead><tr><th>Kind</th><th>Fires when</th></tr></thead>
+      <tbody>
+        <tr><td><code>new</code></td><td>A tracking ID the watcher has never seen appears in the feed.</td></tr>
+        <tr><td><code>updated</code></td><td>A known ID's status, last-update timestamp, title or summary changed.</td></tr>
+        <tr><td><code>resolved</code></td><td>A known ID flipped to resolved, <i>or</i> dropped out of the feed entirely &mdash; Microsoft removes closed incidents, so disappearance is the resolution signal.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <span class="lbl">Restart behaviour</span>
+      The first poll after a start or redeploy primes the baseline and
+      publishes nothing. That is deliberate: a restart must never replay
+      incidents your subscriber has already processed. The trade-off is that a
+      change occurring during a restart window is picked up on the following
+      poll as an <code>updated</code> rather than a <code>new</code>.
+    </div>
+
+    <h4>If you cannot accept an inbound POST</h4>
+    <p>
+      Poll <code>GET /api/status/changes</code> instead. It returns the same
+      delta set from the most recent poll, plus watcher health &mdash; poll
+      count, last poll time, last delivery result and last error.
+    </p>
+  </div>
+</section>
+
+<section id="verify-sig">
+  <div class="card">
+    <div class="kicker">Do not skip this</div>
+    <h2><span class="num">6</span>Verifying the signature</h2>
+    <p>
+      Compute HMAC-SHA256 over the <b>raw request body bytes</b> &mdash; not a
+      re-serialized object &mdash; and compare in constant time. Reject
+      anything that does not match.
+    </p>
+
+    <div class="tabs" data-tabs="sig">
+      <button class="tab on" data-pane="sig-node">Node.js / Express</button>
+      <button class="tab" data-pane="sig-cs">C# / ASP.NET</button>
+      <button class="tab" data-pane="sig-py">Python / Flask</button>
+    </div>
+    <div class="tabbody">
+      <div class="tabpane on" id="sig-node">
+<div class="codewrap"><button class="copy">Copy</button><pre><span class="k">const</span> express = <span class="k">require</span>(<span class="s">"express"</span>);
+<span class="k">const</span> { createHmac, timingSafeEqual } = <span class="k">require</span>(<span class="s">"crypto"</span>);
+
+<span class="k">const</span> SECRET = process.env.WEBHOOK_SECRET;
+<span class="k">const</span> app = express();
+
+<span class="c">// Capture the raw body — signing must use the exact bytes we received.</span>
+app.use(express.json({ verify: (req, _res, buf) =&gt; { req.rawBody = buf; } }));
+
+app.post(<span class="s">"/hooks/cloud-status"</span>, (req, res) =&gt; {
+  <span class="k">const</span> received = String(req.get(<span class="s">"x-aggregator-signature"</span>) || <span class="s">""</span>);
+  <span class="k">const</span> expected = <span class="s">"sha256="</span> +
+    createHmac(<span class="s">"sha256"</span>, SECRET).update(req.rawBody).digest(<span class="s">"hex"</span>);
+
+  <span class="k">const</span> a = Buffer.from(received);
+  <span class="k">const</span> b = Buffer.from(expected);
+  <span class="k">if</span> (a.length !== b.length || !timingSafeEqual(a, b)) {
+    <span class="k">return</span> res.status(<span class="v">401</span>).json({ error: <span class="s">"bad signature"</span> });
+  }
+
+  <span class="k">for</span> (<span class="k">const</span> change <span class="k">of</span> req.body.changes) {
+    <span class="c">// vendor tells you which provider this came from</span>
+    <span class="c">// correlate on issue.trackingId (Microsoft's ID) or issue.id (always present)</span>
+    console.log(req.body.vendor, change.kind, change.issue.trackingId, change.issue.title);
+    <span class="c">// → raise / update / close the ticket in your ITSM system</span>
+  }
+
+  <span class="c">// Always 2xx quickly; do the real work asynchronously.</span>
+  res.status(<span class="v">200</span>).json({ received: req.body.changes.length });
+});
+
+app.listen(<span class="v">8080</span>);</pre></div>
+      </div>
+      <div class="tabpane" id="sig-cs">
+<div class="codewrap"><button class="copy">Copy</button><pre><span class="k">using</span> System.Security.Cryptography;
+<span class="k">using</span> System.Text;
+
+app.MapPost(<span class="s">"/hooks/cloud-status"</span>, <span class="k">async</span> (HttpRequest req) =&gt;
+{
+    <span class="k">using var</span> reader = <span class="k">new</span> StreamReader(req.Body);
+    <span class="k">var</span> raw = <span class="k">await</span> reader.ReadToEndAsync();
+
+    <span class="k">var</span> secret = Environment.GetEnvironmentVariable(<span class="s">"WEBHOOK_SECRET"</span>)!;
+    <span class="k">using var</span> hmac = <span class="k">new</span> HMACSHA256(Encoding.UTF8.GetBytes(secret));
+    <span class="k">var</span> expected = <span class="s">"sha256="</span> +
+        Convert.ToHexString(hmac.ComputeHash(Encoding.UTF8.GetBytes(raw))).ToLowerInvariant();
+
+    <span class="k">var</span> received = req.Headers[<span class="s">"x-aggregator-signature"</span>].ToString();
+
+    <span class="k">if</span> (!CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(received),
+            Encoding.UTF8.GetBytes(expected)))
+    {
+        <span class="k">return</span> Results.Unauthorized();
+    }
+
+    <span class="k">var</span> payload = JsonSerializer.Deserialize&lt;ChangeSet&gt;(raw)!;
+    <span class="k">foreach</span> (<span class="k">var</span> change <span class="k">in</span> payload.Changes)
+    {
+        <span class="c">// route into your ITSM system by payload.Vendor + change.Kind</span>
+    }
+
+    <span class="k">return</span> Results.Ok(<span class="k">new</span> { received = payload.Changes.Count });
+});</pre></div>
+      </div>
+      <div class="tabpane" id="sig-py">
+<div class="codewrap"><button class="copy">Copy</button><pre><span class="k">import</span> hmac, hashlib, os
+<span class="k">from</span> flask <span class="k">import</span> Flask, request, jsonify
+
+app = Flask(__name__)
+SECRET = os.environ[<span class="s">"WEBHOOK_SECRET"</span>].encode()
+
+<span class="v">@app.post</span>(<span class="s">"/hooks/cloud-status"</span>)
+<span class="k">def</span> hook():
+    raw = request.get_data()  <span class="c"># exact bytes, before parsing</span>
+    expected = <span class="s">"sha256="</span> + hmac.new(SECRET, raw, hashlib.sha256).hexdigest()
+    received = request.headers.get(<span class="s">"x-aggregator-signature"</span>, <span class="s">""</span>)
+
+    <span class="k">if not</span> hmac.compare_digest(received, expected):
+        <span class="k">return</span> jsonify(error=<span class="s">"bad signature"</span>), <span class="v">401</span>
+
+    body = request.get_json()
+    <span class="k">for</span> change <span class="k">in</span> body[<span class="s">"changes"</span>]:
+        issue = change[<span class="s">"issue"</span>]
+        print(body[<span class="s">"vendor"</span>], change[<span class="s">"kind"</span>], issue.get(<span class="s">"trackingId"</span>), issue[<span class="s">"title"</span>])
+
+    <span class="k">return</span> jsonify(received=len(body[<span class="s">"changes"</span>])), <span class="v">200</span></pre></div>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">Three ways to get this wrong</span>
+      <b>1.</b> Signing a re-serialized object instead of the raw bytes &mdash;
+      key order and whitespace will differ and every signature fails.
+      <b>2.</b> Using <code>==</code> instead of a constant-time compare.
+      <b>3.</b> Doing slow downstream work before responding &mdash; return 2xx
+      first, process after, or the watcher will log a delivery timeout.
+    </div>
+
+    <h4>Test your receiver before pointing production at it</h4>
+    <div class="codewrap"><button class="copy">Copy</button><pre><span class="c"># Craft a signed request by hand and confirm your endpoint accepts it</span>
+BODY='{"specVersion":"1.0","vendor":"microsoft-azure","counts":{"new":1,"updated":0,"resolved":0},"changes":[]}'
+SIG="sha256=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -r | cut -d' ' -f1)"
+
+curl -i -X POST https://tickets.example.com/hooks/cloud-status \
+  -H "content-type: application/json" \
+  -H "x-aggregator-signature: $SIG" \
+  --data "$BODY"
+
+<span class="c"># Then flip one byte of the body and confirm you get 401.</span></pre></div>
+  </div>
+</section>
+
+<section id="api">
+  <div class="card">
+    <div class="kicker">Surface</div>
+    <h2><span class="num">7</span>API reference</h2>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Returns</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET /healthz</code></td><td>Liveness. <code>{ status, mock }</code>.</td></tr>
+        <tr><td><code>GET /api/status</code></td><td>The full normalized set: <code>overall</code>, <code>counts</code>, <code>global[]</code>, <code>regional[]</code>, <code>maintenance[]</code>, and per-source health.</td></tr>
+        <tr><td><code>GET /api/status?since=&lt;ISO&gt;</code></td><td>Same, filtered to issues updated after a timestamp. Also accepts relative forms like <code>24h</code>.</td></tr>
+        <tr><td><code>GET /api/status?fork=public|tenant</code></td><td>Restricts to the subscription-independent sources, or includes tenant-scoped ones.</td></tr>
+        <tr><td><code>GET /api/status/global</code></td><td>Global incidents only.</td></tr>
+        <tr><td><code>GET /api/status/regional</code></td><td>Region-scoped incidents only.</td></tr>
+        <tr><td><code>GET /api/status/maintenance</code></td><td>Planned maintenance only.</td></tr>
+        <tr><td><code>GET /api/status/resources</code></td><td>Per-resource availability from Resource Health. Requires <code>SUBSCRIPTION_IDS</code>; the public fork returns an explanatory empty result.</td></tr>
+        <tr><td><code>GET /api/status/changes</code></td><td>Watcher state and the most recent delta set. <code>503</code> when <code>WATCH_ENABLED</code> is off.</td></tr>
+        <tr><td><code>GET /api/status/view</code></td><td>The rendered HTML view &mdash; auto-refreshing, with a public/tenant toggle. This is the demo surface.</td></tr>
+        <tr><td><code>GET /api/status/grid/view</code></td><td><code>301</code> to <code>/api/status/view</code>. Legacy path, kept so existing bookmarks work.</td></tr>
+        <tr><td><code>ALL /mcp</code></td><td>Model Context Protocol endpoint.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>The status view</h4>
+    <p>
+      <code>/api/status/view</code> refreshes on the same cadence as the
+      watcher, pauses when the browser tab is hidden, highlights rows that
+      arrived since the last render and raises a toast when something new
+      appears. It has a manual <b>Refresh now</b> and a <b>Pause</b> control
+      for demos where you need the screen to hold still.
+    </p>
+  </div>
+</section>
+
+<section id="mcp">
+  <div class="card">
+    <div class="kicker">For agents</div>
+    <h2><span class="num">8</span>MCP tools</h2>
+    <p>
+      The aggregator speaks Model Context Protocol at <code>/mcp</code>, so
+      Copilot Studio, a Teams bot, or any MCP-capable host can query it
+      directly. Four tools:
+    </p>
+    <table>
+      <thead><tr><th>Tool</th><th>Input</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>get_active_incidents</code></td><td><i>none</i></td><td>Everything currently published, grouped global / regional, with counts and source health.</td></tr>
+        <tr><td><code>get_regional_health</code></td><td><code>region</code></td><td>Incidents affecting a named region. Returns an explicit &ldquo;nothing reported&rdquo; note when the list is empty.</td></tr>
+        <tr><td><code>get_planned_maintenance</code></td><td><code>region?</code>, <code>service?</code></td><td>Maintenance windows, optionally scoped. Omit both for everything.</td></tr>
+        <tr><td><code>lookup_service_region</code></td><td><code>service</code>, <code>region?</code></td><td>&ldquo;Is &lt;service&gt; affected?&rdquo; &mdash; anywhere, or in one region if you pass one. Returns <code>{ impacted, incidentCount, incidents[], regionsAffected }</code>.</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn">
+      <span class="lbl">Scope server-side &mdash; do not filter regions yourself</span>
+      Real Service Health rows frequently arrive with an <b>empty</b>
+      <code>impactedRegions</code> and name the region only in the title &mdash;
+      <i>&ldquo;End of Unplanned Maintenance for App Service in East US 2&rdquo;</i>
+      is a live example from a real tenant. The tools match region against the
+      incident text as well as the structured field. Any client that
+      re-implements filtering on <code>impactedRegions</code> alone
+      <b>will silently miss live events</b>. Pass <code>region</code> to the tool
+      instead.
+    </div>
+    <div class="note">
+      <span class="lbl">Why <code>region</code> is optional</span>
+      &ldquo;Is Front Door having problems?&rdquo; names no region, and it is one
+      of the most common questions an agent receives. When <code>region</code> was
+      mandatory, agents could not express that query and fell back to returning
+      every unrelated incident &mdash; which reads to a user as a hallucination.
+      Omit <code>region</code> to ask &ldquo;anywhere&rdquo;; the response echoes
+      <code>scope: "service-anywhere"</code>.
+    </div>
+    <div class="note">
+      <span class="lbl">The honesty contract holds here too</span>
+      An empty result carries a <code>note</code> stating explicitly that it is
+      <i>not a positive health measurement</i>. Agents built on these tools
+      inherit the right wording instead of confidently telling a user that a
+      service is fine.
+    </div>
+  </div>
+</section>
+
+<section id="mcp-connect">
+  <div class="card">
+    <div class="kicker">For agents</div>
+    <h2><span class="num">9</span>Connect an editor</h2>
+    <p>
+      The endpoint speaks <b>Streamable HTTP</b>. There is no SDK to install and
+      no local process to supervise &mdash; point an MCP-capable host at
+      <code>&lt;app-url&gt;/mcp</code> and it discovers all four tools from the
+      server itself.
+    </p>
+
+    <div class="codewrap"><button class="copy">Copy</button><pre><span class="c"># the URL to hand your editor</span>
+echo "$(azd env get-value SERVICE_API_URI)/mcp"</pre></div>
+
+    <table>
+      <thead><tr><th>Host</th><th>Config file</th><th>Activation</th></tr></thead>
+      <tbody>
+        <tr><td>VS Code</td><td><code>.vscode/mcp.json</code> (workspace) or <code>MCP: Open User Configuration</code></td><td><b>Start</b> code lens above the server block, then Chat &rarr; <b>Agent</b> mode &rarr; Tools picker</td></tr>
+        <tr><td>Visual Studio</td><td><code>.mcp.json</code> in the solution directory</td><td>Copilot Chat &rarr; Agent mode &rarr; Tools</td></tr>
+        <tr><td>Cursor</td><td><code>.cursor/mcp.json</code></td><td>Settings &rarr; MCP &rarr; toggle the server on</td></tr>
+        <tr><td>Copilot Studio</td><td>Custom connector pointing at the same URL</td><td>Add as a tool on the agent</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tabs" data-tabs="mcpcfg">
+      <button class="tab on" data-pane="mcp-vscode">VS Code</button>
+      <button class="tab" data-pane="mcp-cursor">Cursor</button>
+      <button class="tab" data-pane="mcp-bridge">stdio-only hosts</button>
+    </div>
+    <div class="tabbody">
+      <div class="tabpane on" id="mcp-vscode">
+<div class="codewrap"><button class="copy">Copy</button><pre><span class="c">// .vscode/mcp.json</span>
+{
+  <span class="k">"servers"</span>: {
+    <span class="k">"cloud-status-aggregator"</span>: {
+      <span class="k">"type"</span>: <span class="s">"http"</span>,
+      <span class="k">"url"</span>: <span class="s">"https://&lt;your-app&gt;.azurecontainerapps.io/mcp"</span>
+    }
+  }
+}</pre></div>
+      </div>
+      <div class="tabpane" id="mcp-cursor">
+<div class="codewrap"><button class="copy">Copy</button><pre><span class="c">// .cursor/mcp.json  — note the different top-level key</span>
+{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"cloud-status-aggregator"</span>: {
+      <span class="k">"url"</span>: <span class="s">"https://&lt;your-app&gt;.azurecontainerapps.io/mcp"</span>
+    }
+  }
+}</pre></div>
+      </div>
+      <div class="tabpane" id="mcp-bridge">
+<div class="codewrap"><button class="copy">Copy</button><pre><span class="c">// Hosts that only launch local stdio servers need a bridge process.</span>
+<span class="c">// Hosts with native remote support do NOT need this — prefer a direct URL.</span>
+{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"cloud-status-aggregator"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"mcp-remote"</span>,
+               <span class="s">"https://&lt;your-app&gt;.azurecontainerapps.io/mcp"</span>]
+    }
+  }
+}</pre></div>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">Authentication is off by default &mdash; decide before you share the URL</span>
+      A default deployment accepts <code>/mcp</code> requests from anyone who
+      knows the FQDN, which is fine for a pilot on non&#8209;sensitive telemetry
+      and nothing else. The server ships with Microsoft Entra ID bearer&#8209;token
+      validation built in; it is disabled until you set
+      <code>MCP_AUTH_ENABLED=true</code> so that mock mode and the test suite run
+      without a tenant. The mode is never silent &mdash; <code>GET /healthz</code>
+      reports <code>"mcpAuth":"entra"</code> or <code>"mcpAuth":"none"</code>, so
+      you can always tell which one is live.
+    </div>
+
+    <p class="small muted">
+      Container Apps built&#8209;in authentication is <b>not</b> a shortcut here: it
+      uses a browser redirect flow and does not serve the OAuth
+      protected&#8209;resource metadata that MCP clients discover, so switching it on
+      tends to break the client rather than secure it. The app therefore
+      validates tokens itself and serves its own
+      <code>/.well-known/oauth-protected-resource</code>.
+    </p>
+
+    <h4>Turn on Microsoft Entra ID authentication</h4>
+    <p class="small muted">
+      Two app registrations: one identifies the API (the audience tokens are
+      minted for), one lets the editor sign a user in. Both are needed because
+      Entra ID does <b>not</b> implement OAuth Dynamic Client Registration, so an
+      MCP client cannot create its own identity on the fly the way the spec
+      assumes &mdash; you supply the client ID in the editor config instead.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Register the API and expose a scope.</b> The
+        <code>requestedAccessTokenVersion: 2</code> patch matters: it is what
+        makes Entra issue v2.0 tokens whose issuer matches the authority the
+        client discovered.
+        <div class="codewrap"><button class="copy">Copy</button><pre>API_ID=$(az ad app create --display-name "Cloud Status Aggregator API" \
+  --sign-in-audience AzureADMyOrg --query appId -o tsv)
+az ad sp create --id "$API_ID"
+az ad app update --id "$API_ID" --identifier-uris "api://$API_ID"
+
+OBJ=$(az ad app show --id "$API_ID" --query id -o tsv)
+SCOPE_ID=$(uuidgen | tr 'A-Z' 'a-z')
+az rest --method PATCH --uri "https://graph.microsoft.com/v1.0/applications/$OBJ" \
+  --headers Content-Type=application/json --body "{
+    \"api\": {
+      \"requestedAccessTokenVersion\": 2,
+      \"oauth2PermissionScopes\": [{
+        \"id\": \"$SCOPE_ID\", \"value\": \"status.read\",
+        \"type\": \"User\", \"isEnabled\": true,
+        \"adminConsentDisplayName\": \"Read Azure health status\",
+        \"adminConsentDescription\": \"Read aggregated Azure health status\",
+        \"userConsentDisplayName\": \"Read Azure health status\",
+        \"userConsentDescription\": \"Read aggregated Azure health status\"
+      }]
+    }
+  }"</pre></div>
+      </li>
+
+      <li>
+        <b>Register the public client the editor signs in with.</b> No secret &mdash;
+        it is a desktop app using PKCE. The loopback redirect covers any port
+        the editor picks; Entra ignores the port number on
+        <code>localhost</code> and <code>127.0.0.1</code> for public clients.
+        <div class="codewrap"><button class="copy">Copy</button><pre>CLIENT_ID=$(az ad app create --display-name "Cloud Status Aggregator MCP Client" \
+  --sign-in-audience AzureADMyOrg --is-fallback-public-client true \
+  --public-client-redirect-uris "http://localhost" "http://127.0.0.1" \
+     "https://vscode.dev/redirect" "https://insiders.vscode.dev/redirect" \
+  --query appId -o tsv)
+az ad sp create --id "$CLIENT_ID"
+echo "client id: $CLIENT_ID"   <span class="c"># you will paste this into the editor config</span></pre></div>
+      </li>
+
+      <li>
+        <b>Pre&#8209;authorize the client on the API.</b>
+        This stops users being prompted to consent to your own first&#8209;party
+        tool. Add the editor's own well&#8209;known IDs too, in case it signs in
+        with its built&#8209;in identity rather than yours.
+        <div class="codewrap"><button class="copy">Copy</button><pre>az rest --method PATCH --uri "https://graph.microsoft.com/v1.0/applications/$OBJ" \
+  --headers Content-Type=application/json --body "{
+    \"api\": { \"preAuthorizedApplications\": [
+      { \"appId\": \"$CLIENT_ID\", \"delegatedPermissionIds\": [\"$SCOPE_ID\"] },
+      <span class="c">/* Visual Studio Code */</span>
+      { \"appId\": \"aebc6443-996d-45c2-90f0-388ff96faa56\", \"delegatedPermissionIds\": [\"$SCOPE_ID\"] },
+      <span class="c">/* Azure CLI, so you can mint a token to test with */</span>
+      { \"appId\": \"04b07795-8ddb-461a-bbee-02f9e1bf7b46\", \"delegatedPermissionIds\": [\"$SCOPE_ID\"] }
+    ]}
+  }"</pre></div>
+      </li>
+
+      <li>
+        <b>Register the endpoint URL as a second Application ID URI.</b>
+        This is the step people miss, and it is why it comes after the first
+        deploy &mdash; the URL does not exist until then. MCP clients that
+        implement RFC&nbsp;8707 send the endpoint URL as a <code>resource</code>
+        parameter on the token request, and Entra will not issue a token for a
+        resource it has never heard of. Read the warning below before skipping it.
+        <div class="codewrap"><button class="copy">Copy</button><pre>APP_URL=$(azd env get-value SERVICE_API_URI)
+az ad app update --id "$API_ID" \
+  --identifier-uris "api://$API_ID" "$APP_URL/mcp"
+
+az ad app show --id "$API_ID" --query identifierUris -o json
+<span class="c">#   → ["https://&lt;your-app&gt;.azurecontainerapps.io/mcp", "api://&lt;api-app-id&gt;"]</span></pre></div>
+      </li>
+
+      <li>
+        <b>Enable it on the deployment and redeploy.</b> The audience is the
+        API's <span><b>bare application ID</b></span>, not the <code>api://</code>
+        URI &mdash; see the warning below.
+        <div class="codewrap"><button class="copy">Copy</button><pre>azd env set MCP_AUTH_ENABLED true
+azd env set MCP_AUTH_AUDIENCE "$API_ID"
+azd env set MCP_AUTH_TENANT_ID "$(az account show --query tenantId -o tsv)"
+azd up
+
+curl -s "$(azd env get-value SERVICE_API_URI)/healthz"
+<span class="c">#   → {"status":"ok","mock":false,"mcpAuth":"entra"}</span></pre></div>
+      </li>
+
+      <li>
+        <b>Point the editor at it.</b> Add the <code>oauth</code> block to the
+        server entry from the configuration above. On first use the editor opens
+        a browser sign&#8209;in against <code>login.microsoftonline.com</code>; the
+        token is cached and refreshed from then on.
+        <div class="codewrap"><button class="copy">Copy</button><pre>{
+  <span class="k">"servers"</span>: {
+    <span class="k">"cloud-status-aggregator"</span>: {
+      <span class="k">"type"</span>: <span class="s">"http"</span>,
+      <span class="k">"url"</span>: <span class="s">"https://&lt;your-app&gt;.azurecontainerapps.io/mcp"</span>,
+      <span class="k">"oauth"</span>: { <span class="k">"clientId"</span>: <span class="s">"&lt;public-client-app-id&gt;"</span> }
+    }
+  }
+}</pre></div>
+      </li>
+    </ol>
+
+    <div class="note warn">
+      <span class="lbl">If the client fails with <code>AADSTS9010010</code></span>
+      Full text: <i>&ldquo;the resource parameter provided in the request doesn't
+      match with the requested scopes.&rdquo;</i> The client asked for a token
+      using RFC&nbsp;8707 Resource Indicators &mdash; it sent
+      <code>resource=https://&lt;host&gt;/mcp</code> next to the scope. Entra
+      derives the resource from the <i>scope</i> and rejects the pair when the two
+      disagree, so a scope of the form <code>api://&lt;guid&gt;/status.read</code>
+      cannot be combined with an endpoint URL as the resource. The server therefore
+      advertises scopes qualified with its own endpoint URL
+      (<code>https://&lt;host&gt;/mcp/status.read</code>), which is what makes the
+      registration step above mandatory. In VS Code this appears as
+      <code>Connection state: Error 401</code> immediately after a successful
+      metadata discovery, with no sign-in window ever opening.
+      <br><br>
+      If you cannot add the identifier URI &mdash; some tenants restrict this &mdash;
+      pin the old form with
+      <code>azd env set MCP_AUTH_SCOPES "api://&lt;api-app-id&gt;/status.read"</code>.
+      Fully qualified values are passed through untouched. That works with clients
+      that do not send a resource indicator, but not with VS Code.
+    </div>
+
+    <div class="note warn">
+      <span class="lbl">The audience is the bare GUID, not the <code>api://</code> URI</span>
+      A v2.0 access token carries <code>aud</code> as the API's raw application
+      ID even though the client requested the scope as
+      <code>api://&lt;guid&gt;/status.read</code>. Only v1.0 tokens use the
+      <code>api://</code> form. Setting <code>MCP_AUTH_AUDIENCE</code> to the URI
+      rejects every request with a 401 <i>after</i> a sign&#8209;in that looked
+      completely successful, which is a miserable thing to debug. For the same
+      reason the metadata advertises the <b>fully qualified</b> scope: a client
+      that echoes back a bare <code>status.read</code> gets a Microsoft Graph
+      token, which then fails audience validation the same silent way. The
+      server accepts both <code>aud</code> forms defensively.
+    </div>
+
+    <h4>Verify authentication from the command line</h4>
+    <p class="small muted">
+      Run this before involving an editor. It separates &ldquo;the server is
+      wrong&rdquo; from &ldquo;the client is wrong,&rdquo; which is most of the
+      work in diagnosing an MCP auth failure.
+    </p>
+    <div class="codewrap"><button class="copy">Copy</button><pre>APP_URL=$(azd env get-value SERVICE_API_URI)
+
+<span class="c"># 1. No token must be refused, and must say where to authenticate.</span>
+curl -si -X POST "$APP_URL/mcp" -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" -d '{}' | grep -i "^HTTP\|^www-authenticate"
+<span class="c">#   → HTTP/2 401</span>
+<span class="c">#   → www-authenticate: Bearer error="invalid_token", ...,</span>
+<span class="c">#        resource_metadata="https://.../.well-known/oauth-protected-resource/mcp"</span>
+
+<span class="c"># 2. That metadata document must be readable WITHOUT a token.</span>
+curl -s "$APP_URL/.well-known/oauth-protected-resource/mcp"
+<span class="c">#   → {"resource":"...","authorization_servers":["https://login.microsoftonline.com/&lt;tid&gt;/v2.0"],</span>
+<span class="c">#      "scopes_supported":["api://&lt;api-app-id&gt;/status.read"], ...}</span>
+
+<span class="c"># 3. A real token must be accepted.</span>
+TOKEN=$(az account get-access-token --scope "api://&lt;api-app-id&gt;/status.read" \
+  --query accessToken -o tsv)
+curl -si -X POST "$APP_URL/mcp" -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{
+       "protocolVersion":"2025-06-18","capabilities":{},
+       "clientInfo":{"name":"curl","version":"1"}}}' | grep -i "^HTTP\|mcp-session-id"
+<span class="c">#   → HTTP/2 200  +  mcp-session-id: 6f2c...</span></pre></div>
+
+    <p class="small muted">
+      Note that only <code>/mcp</code> is protected. The REST API and the
+      dashboard stay open so the demo still works &mdash; if you need those locked
+      down too, put the whole app behind Azure API Management or Front Door with
+      a WAF, as described in <a href="#harden">Production hardening</a>.
+    </p>
+
+    <h4>Confirm the handshake without an editor</h4>
+    <p class="small muted">
+      Useful when a client fails silently and you need to know which side is at
+      fault. A successful <code>initialize</code> returns a
+      <code>Mcp-Session-Id</code> header; reuse it on every later call.
+    </p>
+    <div class="codewrap"><button class="copy">Copy</button><pre>APP_URL=$(azd env get-value SERVICE_API_URI)
+
+curl -si "$APP_URL/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{
+       "protocolVersion":"2025-06-18","capabilities":{},
+       "clientInfo":{"name":"curl","version":"1"}}}' | grep -i mcp-session-id
+<span class="c">#   → mcp-session-id: 6f2c...  (an empty result means the server never initialized)</span></pre></div>
+
+    <h4>Questions that exercise the tools</h4>
+    <p class="small muted">
+      Use these to demo the surface or to sanity-check that a host is really
+      calling the server rather than answering from training data.
+    </p>
+    <table>
+      <thead><tr><th>Ask the agent</th><th>What it proves</th></tr></thead>
+      <tbody>
+        <tr><td>&ldquo;Are there any active Azure incidents right now?&rdquo;</td><td>Single call to <code>get_active_incidents</code>; returns overall posture plus per-source health</td></tr>
+        <tr><td>&ldquo;What is the health of East US 2?&rdquo;</td><td><code>get_regional_health</code>, including events that name the region only in their title</td></tr>
+        <tr><td>&ldquo;Is App Service affected anywhere?&rdquo;</td><td><code>lookup_service_region</code> with no region &mdash; the <code>service-anywhere</code> scope</td></tr>
+        <tr><td>&ldquo;Any planned Azure maintenance coming up?&rdquo;</td><td><code>get_planned_maintenance</code> unscoped</td></tr>
+        <tr><td>&ldquo;Which Microsoft tracking IDs are open against my subscriptions?&rdquo;</td><td>Data that cannot come from training &mdash; tracking IDs are tenant-specific and change daily</td></tr>
+        <tr><td>&ldquo;We deploy to East US 2 this afternoon. Anything I should know?&rdquo;</td><td>Tool <b>chaining</b> &mdash; regional health plus maintenance, selected by the model without being told which tools to use</td></tr>
+        <tr><td>&ldquo;Compare Azure OpenAI and App Service &mdash; which has more open issues?&rdquo;</td><td>Two <code>lookup_service_region</code> calls and a synthesis step</td></tr>
+        <tr><td>&ldquo;Draft an ops-channel message summarizing current Azure health.&rdquo;</td><td>The realistic end-to-end shape: retrieve, then write</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note warn">
+      <span class="lbl">Test the boundary, not just the happy path</span>
+      Ask <i>&ldquo;is my VM in West Europe down?&rdquo;</i> The correct answer is
+      that <b>no incident is published</b> for that region &mdash; not that the
+      VM is healthy. The aggregator reports what Microsoft has announced; it
+      never probes your workload. If an agent built on these tools tells a user
+      their resource is fine, the integration is wrong even though every call
+      succeeded. The tool responses carry that wording for exactly this reason
+      &mdash; do not summarize it away.
+    </div>
+  </div>
+</section>
+
+<section id="verify">
+  <div class="card">
+    <div class="kicker">Prove it works</div>
+    <h2><span class="num">10</span>Verify the deployment</h2>
+    <div class="codewrap"><button class="copy">Copy</button><pre>APP_URL=$(azd env get-value SERVICE_API_URI)
+
+<span class="c"># 1 — the container is up</span>
+curl -s "$APP_URL/healthz"
+<span class="c">#   → {"status":"ok","mock":false}</span>
+
+<span class="c"># 2 — live sources are reachable and authenticating</span>
+curl -s "$APP_URL/api/status" | jq '{mock, overall, sources}'
+<span class="c">#   Every source should read "ok". A count of 0 on emergingIssues is a PASS —</span>
+<span class="c">#   it means Microsoft has published no broad incident right now.</span>
+
+<span class="c"># 3 — the watcher is running</span>
+curl -s "$APP_URL/api/status/changes" | jq '.watcher'
+<span class="c">#   → running:true, pollCount rising, webhookConfigured:true, webhookSigned:true</span>
+
+<span class="c"># 4 — the view renders</span>
+open "$APP_URL/api/status/view"</pre></div>
+
+    <div class="note good">
+      <span class="lbl">Zero incidents is a passing test</span>
+      On a quiet day <code>emergingIssues</code> legitimately returns nothing.
+      What you are checking is that each source reports <code>ok</code> &mdash;
+      that proves auth and connectivity. An empty incident list on a healthy
+      day is the system working correctly.
+    </div>
+
+    <h4>Force a change to watch the webhook fire</h4>
+    <p class="small muted">
+      Redeploy briefly in mock mode: the sample data contains an active Front
+      Door incident and a SQL Database maintenance window, so the first real
+      poll after switching back to live will emit <code>resolved</code> events
+      and exercise the full delivery path.
+    </p>
+    <div class="codewrap"><button class="copy">Copy</button><pre>az containerapp update \
+  --name ca-azstatus-dev-eus2-001 \
+  --resource-group rg-cloud-status-dev \
+  --set-env-vars MOCK=true
+
+<span class="c"># watch the delivery result</span>
+watch -n 5 "curl -s $APP_URL/api/status/changes | jq '.watcher.lastDelivery'"
+
+<span class="c"># put it back</span>
+az containerapp update \
+  --name ca-azstatus-dev-eus2-001 \
+  --resource-group rg-cloud-status-dev \
+  --set-env-vars MOCK=false</pre></div>
+
+    <h4>Read the logs</h4>
+    <div class="codewrap"><button class="copy">Copy</button><pre>az containerapp logs show \
+  --name ca-azstatus-dev-eus2-001 \
+  --resource-group rg-cloud-status-dev \
+  --follow</pre></div>
+  </div>
+</section>
+
+<section id="harden">
+  <div class="card">
+    <div class="kicker">Before this carries production traffic</div>
+    <h2><span class="num">11</span>Production hardening</h2>
+    <p>
+      The template is a pilot baseline: managed identity everywhere, no plain
+      secrets, RBAC at the narrowest workable scope, logs to Log Analytics,
+      TLS-only ingress. These are the deltas to close before it becomes a
+      production dependency.
+    </p>
+    <table>
+      <thead><tr><th>Area</th><th>Pilot today</th><th>Production target</th></tr></thead>
+      <tbody>
+        <tr><td>Network</td><td>Public ingress; Key Vault reachable from Azure services</td><td>VNet-integrated Container Apps environment, private endpoint on Key Vault, <code>publicNetworkAccess: Disabled</code></td></tr>
+        <tr><td>Edge</td><td>Container Apps default FQDN</td><td>Custom domain behind Front Door or App Gateway with WAF</td></tr>
+        <tr><td>Watcher state</td><td>In-memory baseline, single replica</td><td>Baseline in Redis or Table Storage so replicas can scale out safely</td></tr>
+        <tr><td>Delivery</td><td>Single POST attempt per change set</td><td>Retry with backoff and a dead-letter queue &mdash; or put Service Bus between the watcher and the subscriber</td></tr>
+        <tr><td>Secret lifecycle</td><td>Manually generated key</td><td>Scheduled rotation; support two valid keys during the overlap window</td></tr>
+        <tr><td>Availability</td><td>Single region</td><td>Second region behind Traffic Manager &mdash; an aggregator that reports outages should not share a blast radius with them</td></tr>
+        <tr><td>MCP auth</td><td>Built in but <b>off</b> by default; <code>/healthz</code> reports which mode is live</td><td>Set <code>MCP_AUTH_ENABLED=true</code> to require Entra ID bearer tokens on <code>/mcp</code>. Full procedure in <a href="#mcp-connect">Connect an editor</a></td></tr>
+<tr><td>REST API auth</td><td>Open ingress; no token required</td><td>Not covered by the MCP setting &mdash; front the app with API Management or Front Door, or extend the same middleware to the <code>/api</code> routes</td></tr>
+        <tr><td>Governance</td><td>Tags applied</td><td>Resource locks, Azure Policy assignment, Defender for Cloud enabled on the subscription</td></tr>
+        <tr><td>Alerting</td><td>Logs in Log Analytics</td><td>Alert rules on watcher <code>lastError</code>, on delivery failures, and on poll staleness</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note warn">
+      <span class="lbl">Watch the aggregator itself</span>
+      A change-notification pipeline that silently stops polling is worse than
+      no pipeline &mdash; it reads as &ldquo;all clear.&rdquo; Alert on
+      <code>lastPollAt</code> drifting past two intervals, and treat a stale
+      watcher as an incident in its own right.
+    </div>
+  </div>
+</section>
+
+<section id="trouble">
+  <div class="card">
+    <div class="kicker">When it misbehaves</div>
+    <h2><span class="num">?</span>Troubleshooting</h2>
+    <table>
+      <thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>emergingIssues</code> reports <code>0</code></td>
+          <td><b>Not a fault.</b> Microsoft has published no broad incident. Confirm the source reads <code>ok</code> &mdash; that is the health signal, not the count.</td>
+        </tr>
+        <tr>
+          <td><code>emergingIssues</code> reports an auth error</td>
+          <td>The Reader role assignment has not propagated, or <code>AZURE_CLIENT_ID</code> does not match the identity attached to the app. Wait a few minutes, then restart the revision.</td>
+        </tr>
+        <tr>
+          <td><code>serviceHealth</code> is empty</td>
+          <td><code>SUBSCRIPTION_IDS</code> is unset, or the identity lacks Reader on those subscriptions. Service Health is subscription-scoped by nature.</td>
+        </tr>
+        <tr>
+          <td><code>/api/status/changes</code> returns <code>503</code></td>
+          <td><code>WATCH_ENABLED</code> is not <code>true</code>. Run <code>azd env set WATCH_ENABLED true</code> and <code>azd provision</code>.</td>
+        </tr>
+        <tr>
+          <td><code>lastDelivery.ok</code> is <code>false</code></td>
+          <td>Read <code>lastDelivery.status</code>. <code>401</code> means a signature mismatch &mdash; almost always the receiver re-serializing the body instead of hashing the raw bytes. A timeout means the receiver is doing work before responding.</td>
+        </tr>
+        <tr>
+          <td>Every change arrives twice</td>
+          <td>More than one replica is running. Set <code>minReplicas</code> and <code>maxReplicas</code> to 1, or make the subscriber idempotent on <code>id</code> + <code>kind</code>.</td>
+        </tr>
+        <tr>
+          <td>Container will not start</td>
+          <td>Usually an image pull failure. Check the revision with <code>az containerapp revision list</code>. The template grants the identity <code>AcrPull</code>, but the assignment can lag the first revision &mdash; restart it.</td>
+        </tr>
+        <tr>
+          <td>You rotated the secret in Key Vault and nothing changed</td>
+          <td>By design. The container holds its own copy so a first deployment cannot race the Key Vault RBAC assignment. After rotating, run <code>azd env set WEBHOOK_SECRET &lt;new&gt;</code> then <code>azd provision</code>, and update your subscriber at the same time.</td>
+        </tr>
+        <tr>
+          <td>The app is still running the placeholder hello-world image</td>
+          <td><code>azd provision</code> ran but <code>azd deploy</code> did not. Run <code>azd deploy</code>, or <code>azd up</code> to do both.</td>
+        </tr>
+        <tr>
+          <td>Remote build fails with <code>archive/tar: write too long</code></td>
+          <td>The build context is too large or changed while being packed. Keep <code>.dockerignore</code> intact &mdash; it excludes <code>node_modules</code>, build output and every directory the API image does not need.</td>
+        </tr>
+        <tr>
+          <td><code>azd deploy</code> cannot find the service</td>
+          <td>The container app is located by its <code>azd-service-name</code> tag, which must match the service key in <code>azure.yaml</code> (<code>api</code>). If the tag was edited, re-run <code>azd provision</code>.</td>
+        </tr>
+        <tr>
+          <td>Deployment fails on the Key Vault name</td>
+          <td>Vault names are globally unique and capped at 24 characters. The name carries a hash of the environment name, so a different <code>azd env new</code> name gives a different vault. If you deleted a vault recently, soft-delete is holding the name &mdash; purge it or pick another environment name.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="refs">
+  <div class="card">
+    <div class="kicker">Sources</div>
+    <h2><span class="num">&#167;</span>References</h2>
+    <p class="small">
+      The two design constraints that shaped this service &mdash; that the
+      public feed is poll-only, and that native Service Health alerts need
+      subscription scope &mdash; are documented, not assumed:
+    </p>
+    <ul class="small">
+      <li><a href="https://learn.microsoft.com/azure/service-health/azure-status-overview" target="_blank" rel="noopener">Azure Status overview</a> &mdash; the three publishing scenarios, and the RSS feed as the only subscribe mechanism for the public page.</li>
+      <li><a href="https://learn.microsoft.com/azure/service-health/service-health-overview" target="_blank" rel="noopener">Service Health overview</a> &mdash; personalized, subscription-scoped incident data.</li>
+      <li><a href="https://learn.microsoft.com/azure/service-health/alerts-activity-log-service-notifications-portal" target="_blank" rel="noopener">Service Health alerts</a> &mdash; alerts fire from Activity Log events, hence the subscription requirement.</li>
+      <li><a href="https://learn.microsoft.com/azure/service-health/resource-health-overview" target="_blank" rel="noopener">Resource Health overview</a> &mdash; per-resource availability for resources you own.</li>
+      <li><a href="https://learn.microsoft.com/azure/container-apps/manage-secrets" target="_blank" rel="noopener">Container Apps secrets and Key Vault references</a>.</li>
+      <li><a href="https://learn.microsoft.com/azure/container-apps/managed-identity" target="_blank" rel="noopener">Managed identities in Container Apps</a>.</li>
+      <li><a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/overview" target="_blank" rel="noopener">Azure Developer CLI overview</a> &mdash; what <code>azd up</code> does and the project layout it expects.</li>
+      <li><a href="https://github.com/Azure/azure-dev" target="_blank" rel="noopener">Azure/azure-dev on GitHub</a> &mdash; the <code>azd</code> source, schema and templates.</li>
+    </ul>
+    <div class="note">
+      <span class="lbl">The short version</span>
+      Microsoft offers no webhook or push subscription against the public Azure
+      Status feed &mdash; RSS polling is the documented mechanism. Service
+      Health alerts do reach webhooks through Action Groups, but they need
+      subscription scope, and tenant-wide Service Health alerts at Directory
+      scope are still preview. For a distributor watching providers across
+      customer boundaries, the push layer has to be built. That is what the
+      change watcher in this repository is.
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  Cloud Status Aggregator &mdash; reference implementation for multi-vendor cloud status aggregation<br />
+  <span class="cite">This guide is self-contained. Save it, mail it, or open it offline &mdash; it loads no external resources.</span>
+</footer>
+
+<button class="top" id="toTop" title="Back to top">&#8593;</button>
+
+<script>
+(function () {
+  // Copy buttons
+  document.querySelectorAll(".codewrap").forEach(function (wrap) {
+    var btn = wrap.querySelector(".copy");
+    var pre = wrap.querySelector("pre");
+    if (!btn || !pre) return;
+    btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(pre.innerText).then(function () {
+        btn.textContent = "Copied";
+        btn.classList.add("done");
+        setTimeout(function () {
+          btn.textContent = "Copy";
+          btn.classList.remove("done");
+        }, 1400);
+      });
+    });
+  });
+
+  // Tabs
+  document.querySelectorAll(".tabs").forEach(function (bar) {
+    bar.addEventListener("click", function (e) {
+      var tab = e.target.closest(".tab");
+      if (!tab) return;
+      var body = bar.nextElementSibling;
+      bar.querySelectorAll(".tab").forEach(function (t) { t.classList.remove("on"); });
+      body.querySelectorAll(".tabpane").forEach(function (p) { p.classList.remove("on"); });
+      tab.classList.add("on");
+      var pane = body.querySelector("#" + tab.dataset.pane);
+      if (pane) pane.classList.add("on");
+    });
+  });
+
+  // Active section in the table of contents
+  var links = Array.prototype.slice.call(document.querySelectorAll("nav.toc a"));
+  var sections = links
+    .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+    .filter(Boolean);
+
+  function sync() {
+    var y = window.scrollY + 120;
+    var current = sections[0];
+    sections.forEach(function (s) { if (s.offsetTop <= y) current = s; });
+    links.forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + current.id);
+    });
+  }
+  window.addEventListener("scroll", sync, { passive: true });
+  sync();
+
+  document.getElementById("toTop").addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+</script>
+</body>
+</html>

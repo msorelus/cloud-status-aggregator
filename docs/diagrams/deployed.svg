@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Azure resources created by the deployment" style="width:100%;height:auto;display:block" viewBox="0 0 1222.40 294.10">
+  <defs>
+    <marker id="dp-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8f98a8"/>
+    </marker>
+    <marker id="dp-arrowhead-open" markerWidth="12" markerHeight="9" refX="11" refY="4.50" orient="auto">
+      <polygon points="0 0, 12 4.50, 0 9" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+    <marker id="dp-arrowhead-filled-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#8f98a8"/>
+    </marker>
+    <marker id="dp-arrowhead-open-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+  </defs>
+  <rect width="1222.40" height="294.10" fill="#0d1119" rx="10.00" ry="10.00"/>
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 1 605.20,94.00 L 144.60,94.00 A 6.00,6.00 0 0 0 138.60,100.00 L 138.60,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 1 605.20,94.00 L 493.80,94.00 A 6.00,6.00 0 0 0 487.80,100.00 L 487.80,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 487.80,162.00 L 487.80,178.00 A 6.00,6.00 0 0 1 481.80,184.00 L 370.40,184.00 A 6.00,6.00 0 0 0 364.40,190.00 L 364.40,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 487.80,162.00 L 487.80,178.00 A 6.00,6.00 0 0 0 493.80,184.00 L 580.00,184.00 A 6.00,6.00 0 0 1 586.00,190.00 L 586.00,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 0 617.20,94.00 L 826.80,94.00 A 6.00,6.00 0 0 1 832.80,100.00 L 832.80,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 832.80,162.00 L 832.80,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 611.20,72.00 L 611.20,88.00 A 6.00,6.00 0 0 0 617.20,94.00 L 1077.80,94.00 A 6.00,6.00 0 0 1 1083.80,100.00 L 1083.80,116.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <path d="M 1083.80,178.10 L 1083.80,206.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   />
+  <g transform="translate(536.40,26.00)">
+    <defs>
+      <linearGradient id="dp-node-0-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A3141"/>
+        <stop offset="58%" stop-color="#1a2233"/>
+        <stop offset="100%" stop-color="#182030"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-0-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="74.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Resource group</text>
+  </g>
+  <g transform="translate(26.00,116.00)">
+    <defs>
+      <linearGradient id="dp-node-1-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#283444"/>
+        <stop offset="58%" stop-color="#182536"/>
+        <stop offset="100%" stop-color="#162333"/>
+      </linearGradient>
+    </defs>
+    <rect width="225.20" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-1-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <text x="112.60" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Log Analytics workspace</text>
+  </g>
+  <g transform="translate(404.60,116.00)">
+    <defs>
+      <linearGradient id="dp-node-2-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2B303E"/>
+        <stop offset="58%" stop-color="#1b2130"/>
+        <stop offset="100%" stop-color="#191F2D"/>
+      </linearGradient>
+    </defs>
+    <rect width="166.40" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-2-fill-gradient)" stroke="#38bdf8" stroke-width="1.50"/>
+    <text x="83.20" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Managed identity</text>
+  </g>
+  <g transform="translate(281.20,206.00)">
+    <defs>
+      <linearGradient id="dp-node-3-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2E3346"/>
+        <stop offset="58%" stop-color="#1e2438"/>
+        <stop offset="100%" stop-color="#1C2235"/>
+      </linearGradient>
+    </defs>
+    <rect width="166.40" height="62.10" rx="10.00" ry="10.00" fill="url(#dp-node-3-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <text x="83.20" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">
+      <tspan x="83.20" y="27.90">Reader on health</tspan>
+      <tspan x="83.20" dy="16.10">providers</tspan>
+    </text>
+  </g>
+  <g transform="translate(477.60,206.00)">
+    <defs>
+      <linearGradient id="dp-node-4-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#302D41"/>
+        <stop offset="58%" stop-color="#201d33"/>
+        <stop offset="100%" stop-color="#1E1B30"/>
+      </linearGradient>
+    </defs>
+    <rect width="216.80" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-4-fill-gradient)" stroke="#6c8cc7" stroke-width="1.50"/>
+    <text x="108.40" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Key Vault Secrets User</text>
+  </g>
+  <g transform="translate(772.80,116.00)">
+    <defs>
+      <linearGradient id="dp-node-5-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#25343E"/>
+        <stop offset="58%" stop-color="#152530"/>
+        <stop offset="100%" stop-color="#13232D"/>
+      </linearGradient>
+    </defs>
+    <rect width="120.00" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-5-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="60.00" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Key Vault</text>
+  </g>
+  <g transform="translate(724.40,206.00)">
+    <defs>
+      <linearGradient id="dp-node-6-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A2F3D"/>
+        <stop offset="58%" stop-color="#1a1f2e"/>
+        <stop offset="100%" stop-color="#181D2B"/>
+      </linearGradient>
+    </defs>
+    <rect width="216.80" height="46.00" rx="10.00" ry="10.00" fill="url(#dp-node-6-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <text x="108.40" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">webhook-signing-secret</text>
+  </g>
+  <g transform="translate(1009.00,116.00)">
+    <defs>
+      <linearGradient id="dp-node-7-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#273439"/>
+        <stop offset="58%" stop-color="#17252a"/>
+        <stop offset="100%" stop-color="#152327"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="62.10" rx="10.00" ry="10.00" fill="url(#dp-node-7-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <text x="74.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">
+      <tspan x="74.80" y="27.90">Container Apps</tspan>
+      <tspan x="74.80" dy="16.10">environment</tspan>
+    </text>
+  </g>
+  <g transform="translate(971.20,206.00)">
+    <defs>
+      <linearGradient id="dp-node-8-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A3141"/>
+        <stop offset="58%" stop-color="#1a2233"/>
+        <stop offset="100%" stop-color="#182030"/>
+      </linearGradient>
+    </defs>
+    <rect width="225.20" height="62.10" rx="10.00" ry="10.00" fill="url(#dp-node-8-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="112.60" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">
+      <tspan x="112.60" y="27.90">Container App - API and</tspan>
+      <tspan x="112.60" dy="16.10">watcher</tspan>
+    </text>
+  </g>
+</svg>

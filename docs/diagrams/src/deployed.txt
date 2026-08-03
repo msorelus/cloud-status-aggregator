@@ -1,0 +1,12 @@
+diagram: tree
+style: orgchart
+tree:
+  Resource group
+    Log Analytics workspace
+    Managed identity
+      Reader on health providers
+      Key Vault Secrets User
+    Key Vault
+      webhook-signing-secret
+    Container Apps environment
+      Container App - API and watcher

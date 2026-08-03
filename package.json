@@ -1,0 +1,40 @@
+{
+  "name": "cloud-status-aggregator",
+  "version": "0.1.0",
+  "description": "Subscription-independent Azure status aggregator API (POC)",
+  "main": "dist/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && npm run copy-assets",
+    "copy-assets": "node -e \"const fs=require('fs');fs.mkdirSync('dist/mock',{recursive:true});for(const f of fs.readdirSync('src/mock'))fs.copyFileSync('src/mock/'+f,'dist/mock/'+f)\"",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "demo": "MOCK=true ts-node src/server.ts",
+    "test": "TS_NODE_TRANSPILE_ONLY=1 node --require ts-node/register --test test/unit.parsers.test.ts test/unit.normalize.test.ts test/unit.match.test.ts test/unit.filter.test.ts test/unit.watch.test.ts test/unit.resourceHealth.test.ts test/unit.mcpAuth.test.ts test/e2e.api.test.ts test/mcp.smoke.test.ts",
+    "live:check": "ts-node scripts/live-check.ts",
+    "webhook:listen": "node scripts/live-webhook-listener.js",
+    "webhook:drill": "node scripts/live-webhook-drill.js",
+    "mcp:smoke": "TS_NODE_TRANSPILE_ONLY=1 ts-node scripts/mcp-smoke.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.4.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "express": "^4.19.2",
+    "fast-xml-parser": "^4.4.1",
+    "jose": "^6.2.4",
+    "node-fetch": "^2.7.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.0",
+    "@types/node-fetch": "^2.6.11",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

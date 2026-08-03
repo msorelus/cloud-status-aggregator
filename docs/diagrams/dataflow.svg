@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data flow from vendor feeds through the aggregator to your systems" style="width:100%;height:auto;display:block" viewBox="0 0 1114.40 486.00">
+  <defs>
+    <marker id="df-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8f98a8"/>
+    </marker>
+    <marker id="df-arrowhead-open" markerWidth="12" markerHeight="9" refX="11" refY="4.50" orient="auto">
+      <polygon points="0 0, 12 4.50, 0 9" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+    <marker id="df-arrowhead-filled-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#8f98a8"/>
+    </marker>
+    <marker id="df-arrowhead-open-diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.50" orient="auto">
+      <polygon points="1 4.50, 7 1, 13 4.50, 7 8" fill="#0d1119" stroke="#8f98a8" stroke-width="1.50"/>
+    </marker>
+  </defs>
+  <rect width="1114.40" height="486.00" fill="#0d1119" rx="10.00" ry="10.00"/>
+  <defs>
+    <linearGradient id="df-group-0-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="277.60" y="26.00" width="223.60" height="100.00" rx="10.00" ry="10.00" fill="url(#df-group-0-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="287.60" y="36.00" width="86.88" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="296.60" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Aggregator</text>
+  <defs>
+    <linearGradient id="df-group-1-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="529.20" y="26.00" width="265.60" height="272.00" rx="10.00" ry="10.00" fill="url(#df-group-1-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="539.20" y="36.00" width="121.32" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="548.20" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Ways to consume</text>
+  <defs>
+    <linearGradient id="df-group-2-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="26.00" y="26.00" width="223.60" height="434.00" rx="10.00" ry="10.00" fill="url(#df-group-2-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="36.00" y="36.00" width="100.66" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="45.00" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Vendor feeds</text>
+  <defs>
+    <linearGradient id="df-group-3-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#21242FCC"/>
+      <stop offset="58%" stop-color="#10141fCC"/>
+      <stop offset="100%" stop-color="#0F131DCC"/>
+    </linearGradient>
+  </defs>
+  <rect x="822.80" y="26.00" width="265.60" height="154.00" rx="10.00" ry="10.00" fill="url(#df-group-3-fill-gradient)" stroke="#252c3d" stroke-width="1.50"/>
+  <rect x="832.80" y="36.00" width="100.66" height="21.48" rx="10.74" ry="10.74" fill="#121721" stroke="#232A3A" stroke-width="1.20"/>
+  <text x="841.80" y="50.61" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="11.48" fill="#e9ecf1" font-weight="bold">Your systems</text>
+  <path d="M 208.40,254.00 C 283.39,254.00 259.52,153.80 293.60,87.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 233.60,114.00 C 259.92,114.00 269.60,97.80 293.60,87.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 116.80,344.00 C 116.80,200.30 280.36,203.60 389.40,110.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 485.20,87.00 C 509.20,87.00 521.20,87.00 545.20,87.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 485.20,87.00 C 527.14,87.00 521.20,138.60 545.20,173.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 485.20,87.00 C 558.07,87.00 521.20,190.20 545.20,259.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 778.80,87.00 C 805.12,87.00 814.80,103.20 838.80,114.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 745.20,173.00 C 789.46,173.00 801.36,137.60 838.80,114.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <path d="M 694.80,259.00 C 776.54,259.00 781.20,172.00 838.80,114.00" fill="none" stroke="#8f98a8" stroke-width="1.50"   marker-end="url(#df-arrowhead)" />
+  <g transform="translate(42.00,204.00)">
+    <defs>
+      <linearGradient id="df-node-0-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A3141"/>
+        <stop offset="58%" stop-color="#1a2233"/>
+        <stop offset="100%" stop-color="#182030"/>
+      </linearGradient>
+    </defs>
+    <rect width="166.40" height="100.00" rx="0" ry="0" fill="url(#df-node-0-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <g transform="translate(59.20,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><ellipse cx="12" cy="12" rx="4" ry="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M4.93 5h14.14M4.93 19h14.14" /></g>
+      </svg>
+    </g>
+    <text x="83.20" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Azure Status RSS</text>
+  </g>
+  <g transform="translate(42.00,64.00)">
+    <defs>
+      <linearGradient id="df-node-1-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#283444"/>
+        <stop offset="58%" stop-color="#182536"/>
+        <stop offset="100%" stop-color="#162333"/>
+      </linearGradient>
+    </defs>
+    <rect width="191.60" height="100.00" rx="0" ry="0" fill="url(#df-node-1-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <g transform="translate(71.80,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <path d="M18.74 10.04A6.87 6.87 0 0 0 12 4C9.34 4 7.05 5.64 5.9 8.04A5.5 5.5 0 0 0 1 14c0 3.31 2.47 6 5.5 6h11.93c2.53 0 4.58-2.24 4.58-5 0-2.64-1.88-4.78-4.27-4.96z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+      </svg>
+    </g>
+    <text x="95.80" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Emerging Issues API</text>
+  </g>
+  <g transform="translate(42.00,344.00)">
+    <defs>
+      <linearGradient id="df-node-2-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2B303E"/>
+        <stop offset="58%" stop-color="#1b2130"/>
+        <stop offset="100%" stop-color="#191F2D"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="100.00" rx="0" ry="0" fill="url(#df-node-2-fill-gradient)" stroke="#38bdf8" stroke-width="1.50"/>
+    <g transform="translate(50.80,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2" /><rect x="2" y="14" width="20" height="8" rx="2" ry="2" /><circle cx="6" cy="6" r="1" fill="currentColor" /><circle cx="6" cy="18" r="1" fill="currentColor" /></g>
+      </svg>
+    </g>
+    <text x="74.80" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Service Health</text>
+  </g>
+  <g transform="translate(293.60,64.00)">
+    <defs>
+      <linearGradient id="df-node-3-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2E3346"/>
+        <stop offset="58%" stop-color="#1e2438"/>
+        <stop offset="100%" stop-color="#1C2235"/>
+      </linearGradient>
+    </defs>
+    <rect width="191.60" height="46.00" rx="0" ry="0" fill="url(#df-node-3-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <text x="95.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Normalize and merge</text>
+  </g>
+  <g transform="translate(545.20,64.00)">
+    <defs>
+      <linearGradient id="df-node-4-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#302D41"/>
+        <stop offset="58%" stop-color="#201d33"/>
+        <stop offset="100%" stop-color="#1E1B30"/>
+      </linearGradient>
+    </defs>
+    <rect width="233.60" height="46.00" rx="0" ry="0" fill="url(#df-node-4-fill-gradient)" stroke="#6c8cc7" stroke-width="1.50"/>
+    <text x="116.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">REST API and status view</text>
+  </g>
+  <g transform="translate(545.20,150.00)">
+    <defs>
+      <linearGradient id="df-node-5-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#25343E"/>
+        <stop offset="58%" stop-color="#152530"/>
+        <stop offset="100%" stop-color="#13232D"/>
+      </linearGradient>
+    </defs>
+    <rect width="200.00" height="46.00" rx="0" ry="0" fill="url(#df-node-5-fill-gradient)" stroke="#2f9bff" stroke-width="1.50"/>
+    <text x="100.00" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">MCP tools for agents</text>
+  </g>
+  <g transform="translate(545.20,236.00)">
+    <defs>
+      <linearGradient id="df-node-6-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2A2F3D"/>
+        <stop offset="58%" stop-color="#1a1f2e"/>
+        <stop offset="100%" stop-color="#181D2B"/>
+      </linearGradient>
+    </defs>
+    <rect width="149.60" height="46.00" rx="0" ry="0" fill="url(#df-node-6-fill-gradient)" stroke="#4f8ff7" stroke-width="1.50"/>
+    <text x="74.80" y="27.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Change watcher</text>
+  </g>
+  <g transform="translate(838.80,64.00)">
+    <defs>
+      <linearGradient id="df-node-7-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#273439"/>
+        <stop offset="58%" stop-color="#17252a"/>
+        <stop offset="100%" stop-color="#152327"/>
+      </linearGradient>
+    </defs>
+    <rect width="233.60" height="100.00" rx="0" ry="0" fill="url(#df-node-7-fill-gradient)" stroke="#a78bfa" stroke-width="1.50"/>
+    <g transform="translate(92.80,16.00)">
+      <svg width="48.00" height="48.00" viewBox="0 0 24 24" overflow="visible" color="#e9ecf1">
+        <g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5.5" rx="8" ry="3.5" /><path d="M4 5.5v13c0 1.93 3.58 3.5 8 3.5s8-1.57 8-3.5v-13" /><path d="M4 12c0 1.93 3.58 3.5 8 3.5s8-1.57 8-3.5" /></g>
+      </svg>
+    </g>
+    <text x="116.80" y="81.90" text-anchor="middle" font-family="&quot;Segoe UI&quot;, system-ui, -apple-system, &quot;Helvetica Neue&quot;, Arial, sans-serif" font-size="14.00" fill="#e9ecf1">Ticketing and dashboards</text>
+  </g>
+</svg>

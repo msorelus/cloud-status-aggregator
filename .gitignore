@@ -1,0 +1,35 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+npm-debug.log*
+
+# Azure Developer CLI environments hold per-environment settings and secrets.
+.azure/
+
+# -----------------------------------------------------------------------------
+# Engagement context — never publish.
+# -----------------------------------------------------------------------------
+# Customer-identifying material: named account context, meeting notes, decision
+# trees and raw customer email. Working artifacts, not part of the deliverable.
+# Everything needed to deploy and run this lives in handoff/, infra/, docs/,
+# src/ and README.md.
+brief/
+emails/
+AGENTS.md
+.xcopilot.json
+*.eml
+
+# Attachments extracted from customer mail. These land at the repo root with
+# generic names (image001.png, image002.png ...) and are inbound material, not
+# authored content. Diagrams that belong to the deliverable live in
+# docs/diagrams/ and are committed.
+image[0-9][0-9][0-9].png
+
+# Local runtime state and tunnel logs.
+**/.runtime/
+
+# Local MCP client config — holds a tenant-specific endpoint URL.
+# Copy .vscode/mcp.json.example and fill in your own deployment.
+.vscode/mcp.json

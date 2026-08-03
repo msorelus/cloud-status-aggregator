@@ -1,0 +1,26 @@
+flowchart LR
+  subgraph Sec[Identity and secrets]
+    UAMI[User-assigned managed identity]
+    KV[icon:builtin:database Key Vault]
+  end
+
+  subgraph Run[Container Apps]
+    CAE[icon:builtin:cloud Managed environment]
+    APP[icon:builtin:server Container App: API and watcher]
+  end
+
+  subgraph Obs[Diagnostics]
+    LAW[icon:builtin:disk Log Analytics workspace]
+  end
+
+  subgraph Read[Read-only scope]
+    PROV[Azure health providers]
+  end
+
+  UAMI -->|Key Vault Secrets User| KV
+  UAMI -->|Reader| PROV
+  KV -->|secret reference| APP
+  CAE --> APP
+  APP --> LAW
+  CAE --> LAW
+  APP --> PROV

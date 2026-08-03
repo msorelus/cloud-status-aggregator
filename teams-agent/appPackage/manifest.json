@@ -1,0 +1,34 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.17",
+  "version": "0.1.0",
+  "id": "${{BOT_ID}}",
+  "developer": {
+    "name": "Cloud Status Aggregator",
+    "websiteUrl": "https://${{TUNNEL_HOST}}",
+    "privacyUrl": "https://${{TUNNEL_HOST}}/privacy",
+    "termsOfUseUrl": "https://${{TUNNEL_HOST}}/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Cloud Status",
+    "full": "Cloud Status Aggregator Teams Agent"
+  },
+  "description": {
+    "short": "Answers Azure status questions with tracking IDs.",
+    "full": "Custom-engine Teams agent that answers natural-language Azure status questions by calling the Cloud Status Aggregator MCP server and citing Microsoft tracking IDs."
+  },
+  "accentColor": "#0078D4",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "validDomains": ["${{TUNNEL_HOST}}"]
+}
